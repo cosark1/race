@@ -25,10 +25,12 @@ h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
   color:#fff; font-size:16px; font-weight:600; cursor:pointer; padding:14px; font-family:inherit}
 .btn:active{transform:scale(.985)}
 .btn.alt{background:transparent; border:1.5px solid var(--line); color:var(--ink)}
+.btn.gold{background:var(--gold)}
 .btn:disabled{opacity:.4}
 .sec{font-size:13px; color:var(--soft)}
 .pill{display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px;
   background:rgba(184,134,58,.14); color:var(--gold); font-weight:600}
+.pill.gri{background:rgba(120,130,125,.16); color:var(--soft)}
 input[type=text]{width:100%; min-height:48px; padding:12px 14px; border-radius:12px;
   border:1.5px solid var(--line); background:var(--card); color:var(--ink); font-size:16px; font-family:inherit}
 .screen{display:none} .screen.on{display:block}
@@ -37,6 +39,14 @@ input[type=text]{width:100%; min-height:48px; padding:12px 14px; border-radius:1
   padding:13px 15px; font-size:13.5px; line-height:1.55; margin:0 0 20px; color:var(--soft)}
 .uyari b{color:var(--ink)}
 
+/* Geri sayım */
+.sayac-kutu{text-align:center; padding:4px 0 2px}
+.sayac{font-family:Georgia,serif; font-size:34px; font-weight:600; color:var(--green);
+  letter-spacing:.5px; line-height:1.2}
+@media (prefers-color-scheme: dark){ .sayac{color:var(--gold)} }
+.sayac.yakin{color:var(--gold)}
+.sayac-etiket{font-size:12.5px; color:var(--soft); margin-top:2px}
+
 .ilce-sec{display:block; width:100%; text-align:left; background:var(--card); border:1px solid var(--line);
   border-radius:10px; padding:12px 14px; margin-bottom:6px; font-size:15px; cursor:pointer;
   color:var(--ink); font-family:inherit}
@@ -44,7 +54,15 @@ input[type=text]{width:100%; min-height:48px; padding:12px 14px; border-radius:1
 .secili{display:flex; align-items:center; gap:8px; background:rgba(45,95,74,.1);
   border:1.5px solid var(--green); border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:15px}
 
-/* Demo/test kontrolleri — GERÇEK ÜRÜNDE OLMAYACAK, ?test=1 ile görünür */
+/* Arşiv/alıştırma listesi */
+.arsiv-satir{display:flex; align-items:center; justify-content:space-between; gap:10px;
+  width:100%; text-align:left; background:transparent; border:none; border-bottom:1px solid var(--line);
+  padding:12px 2px; font-family:inherit; font-size:14.5px; color:var(--ink); cursor:pointer}
+.arsiv-satir:last-child{border-bottom:none}
+.arsiv-satir:active{opacity:.6}
+.arsiv-satir .ok{color:var(--soft); font-size:13px}
+
+/* Test kontrolleri — yalnızca ?test=1 ile görünür, gerçek üründe yok */
 .demo{position:sticky; top:0; z-index:9; background:var(--ink); color:var(--bg);
   padding:7px 10px; font-size:11px; display:flex; gap:6px; align-items:center; flex-wrap:wrap}
 .demo b{font-size:10px; letter-spacing:.5px; opacity:.7}
@@ -76,39 +94,35 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
   <h2 style="margin-bottom:10px">Kurulum eksik</h2>
   <p class="sec">
     <code>config.js</code> içindeki Supabase URL ve anon key henüz gerçek değerlerle
-    değiştirilmemiş. <code>quiz/supabase/KURULUM.md</code>'deki adımları izleyip proje bilgilerini
+    değiştirilmemiş. <code>supabase/KURULUM.md</code>'deki adımları izleyip proje bilgilerini
     <code>config.js</code>'e yapıştır.
   </p>
 </div>
 
 <div id="app" style="display:none">
 
-<!-- ══ TEST KONTROLLERİ — yalnızca ?test=1 ile görünür, gerçek üründe yok ══ -->
+<!-- ══ TEST KONTROLLERİ — yalnızca ?test=1 ile görünür ══ -->
 <div class="demo" id="demo-bar" style="display:none">
   <b>TEST</b>
-  <button onclick="sorularaGit()">Sorular</button>
-  <button onclick="basla()">Cevaplama</button>
-  <button onclick="sifirla()">Sıfırla</button>
+  <button onclick="sifirla()">Giriş</button>
+  <span class="sec" id="demo-bilgi" style="opacity:.6"></span>
 </div>
 
 <div class="wrap">
 
 <!-- ══ GİRİŞ ══ -->
 <section id="s-giris" class="screen on">
+
+  <!-- Bu haftanın durumu -->
   <div class="card">
-    <span class="pill" id="g-tarih">Yükleniyor…</span>
-    <h1 style="font-size:25px; margin:12px 0 6px">Bu haftanın hutbesi</h1>
+    <span class="pill" id="g-pill">Yükleniyor…</span>
+    <h1 style="font-size:25px; margin:12px 0 6px" id="g-ustbaslik">Bu haftanın hutbesi</h1>
     <h2 style="font-size:19px; color:var(--gold); margin-bottom:14px" id="g-baslik"></h2>
-    <p class="sec" style="margin:0 0 16px">
-      Ezanla birlikte sorular açılır. Cevaplar <b style="color:var(--ink)">bu haftanın hutbesinde</b>.
-    </p>
+    <p class="sec" id="g-aciklama" style="margin:0"></p>
+  </div>
 
-    <div class="uyari">
-      ⏱ <b>Her sorunun süresi var.</b> Süre işledikçe puanın düşer.
-      Hutbeyi dinlemeden başlarsan hem cevapları bilemezsin hem de puan kaybedersin —
-      soruyu, hatip o konuya geldiğinde aç.
-    </div>
-
+  <!-- İlçe + geri sayım -->
+  <div class="card">
     <label class="sec" style="display:block; margin-bottom:8px">Nerede namaz kılıyorsun?</label>
     <button class="btn alt" onclick="konumBul()">📍 Konumumu kullan</button>
     <p class="sec" id="konum-durum" style="margin:8px 0 0; text-align:center"></p>
@@ -119,20 +133,37 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
     <div id="ilce-sonuc" style="margin-top:8px"></div>
     <div id="secili-kutu"></div>
 
-    <button class="btn" id="basla-btn" onclick="girisTamam()" disabled style="margin-top:6px">
+    <!-- Geri sayım: ilçe seçilince belirir -->
+    <div id="sayac-kart" style="display:none">
+      <div class="sayac-kutu">
+        <div class="sayac" id="sayac">—</div>
+        <div class="sayac-etiket" id="sayac-etiket"></div>
+      </div>
+    </div>
+
+    <button class="btn" id="basla-btn" onclick="girisTamam()" disabled style="margin-top:14px">
       Önce ilçeni seç
     </button>
-    <p class="sec" id="g-durum" style="margin:14px 0 0; text-align:center"></p>
+    <p class="sec" id="g-durum" style="margin:12px 0 0; text-align:center"></p>
     <p class="sec" style="margin:6px 0 0; text-align:center">
       Kayıt yok, isim yok. Konumun yalnızca ilçeni bulmak için kullanılır, <b style="color:var(--ink)">kaydedilmez</b>.
     </p>
   </div>
+
+  <!-- Alıştırma: geçmiş hutbeler -->
+  <div class="card" id="alistirma-kart" style="display:none">
+    <span class="pill gri">Alıştırma</span>
+    <h3 style="font-size:17px; margin:10px 0 6px" id="al-baslik"></h3>
+    <p class="sec" style="margin:0 0 14px" id="al-aciklama"></p>
+    <button class="btn gold" id="al-btn" onclick="alistirmaBasla()">Alıştırma yap</button>
+    <div id="al-digerleri" style="margin-top:16px"></div>
+  </div>
 </section>
 
-<!-- ══ SORULAR — ezanla birlikte açılır, anında cevaplanabilir ══ -->
+<!-- ══ SORULAR ══ -->
 <section id="s-sorular" class="screen">
   <div class="card" style="text-align:center">
-    <span class="pill">Ezan okundu · Sorular açık</span>
+    <span class="pill" id="sr-pill">Sorular açık</span>
     <h1 style="font-size:22px; margin:12px 0 8px" id="sr-baslik">Bu haftanın soruları</h1>
     <p class="sec" style="margin:0 0 14px">
       Sorular <b style="color:var(--ink)">hutbenin akışıyla aynı sırada</b>.
@@ -147,6 +178,7 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
   <div id="soru-liste"></div>
   <div class="card">
     <button class="btn" onclick="basla()">Cevaplamaya başla</button>
+    <button class="btn alt" style="margin-top:9px" onclick="sifirla()">← Geri</button>
   </div>
 </section>
 
@@ -167,7 +199,7 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
 <!-- ══ SONUÇ ══ -->
 <section id="s-sonuc" class="screen">
   <div class="card" style="text-align:center">
-    <span class="pill">Tamamlandı</span>
+    <span class="pill" id="r-pill">Tamamlandı</span>
     <div class="kutu" id="r-kutular"></div>
     <div class="skor" id="r-skor"></div>
     <p class="sec" id="r-ozet" style="margin:2px 0 18px"></p>
@@ -196,11 +228,7 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
 <script>
 /* ══════════════ KURULUM / BAĞLANTI ══════════════ */
 const yapilandirmaEksik = !window.HQ_CONFIG || /SENIN-/.test(HQ_CONFIG.url) || /SENIN-/.test(HQ_CONFIG.anonKey);
-if (yapilandirmaEksik) {
-  document.getElementById('s-kurulum-eksik').style.display = 'block';
-} else {
-  document.getElementById('app').style.display = 'block';
-}
+document.getElementById(yapilandirmaEksik ? 's-kurulum-eksik' : 'app').style.display = 'block';
 const sb = yapilandirmaEksik ? null : window.supabase.createClient(HQ_CONFIG.url, HQ_CONFIG.anonKey);
 
 const TEST_MODE = new URLSearchParams(location.search).has('test');
@@ -212,12 +240,14 @@ const ISIMLER = ['Ceylan','Şahin','Turna','Kırlangıç','Zeytin','Pınar','Yı
   'Rüzgâr','Nar','Selvi','Kekik','Çınar','Kartal','Doğan','Leylek','Bülbül'];
 
 /* ══════════════ DURUM ══════════════ */
-let ILCELER = [];                 // Supabase'den bir kez çekilip belleğe alınır — ~972 ilçe, ~60KB
-let HUTBE = null;                 // {id, tarih, baslik}
-let SORULAR = [];                 // sorular_public satırları (dogru_idx İÇERMEZ)
+let ILCELER = [];                 // Supabase'den bir kez çekilip belleğe alınır — ~972 ilçe
+let HAFTA = null;                 // hafta_durumu() sonucu: bugünkü hutbe + geçmiş hutbeler
+let HUTBE = null;                 // oynanan hutbe {id, tarih, baslik}
+let SORULAR = [];                 // canlı: sorular_public (cevapsız) · alıştırma: cevaplı
 let ilceId = null, ilce = '', il = '';
 let oturumId = null, takmaAd = '';
 let qi = 0, puan = 0, sonuclar = [], zamanlayici = null, soruBas = 0;
+let alistirmaMi = false;          // true → sunucuya hiçbir şey yazılmaz, puan istemcide hesaplanır
 
 /* Cihaz jetonu → takma ad DETERMİNİSTİK üretilir; sunucuya yalnızca HASH'i gider (§8 KVKK) */
 function jeton(){
@@ -228,10 +258,11 @@ function jeton(){
 function hash(s){ let h=5381; for(const c of s) h=((h<<5)+h+c.charCodeAt(0))>>>0; return h; }
 // NOT: kaydırma İŞARETSİZ (>>>) olmalı — hash 2^31'i aştığında işaretli >> negatif sonuç verir.
 function adUret(){ const h=hash(jeton()); return SIFATLAR[h%SIFATLAR.length]+' '+ISIMLER[(h>>>7)%ISIMLER.length]; }
-// Jeton HASH'i: SubtleCrypto http (localhost/https olmayan) origin'lerde çalışmadığından
-// (telefonla yerel ağdan test için önemli) kasıtlı olarak basit/kripto-olmayan bir hash kullanılıyor.
-// Jeton zaten anlamsız rastgele bir UUID olduğu için bu, gerçek bir gizlilik riski doğurmuyor.
-function jetonHash(){ const t = jeton(); return (hash(t) >>> 0).toString(16) + (hash(t.split('').reverse().join('')) >>> 0).toString(16); }
+// SubtleCrypto http origin'lerde (telefonla yerel ağ testi) çalışmadığı için kasıtlı olarak
+// basit/kripto-olmayan hash. Jeton zaten anlamsız rastgele bir UUID, gizlilik riski doğurmuyor.
+function jetonHash(){ const t = jeton(); return (hash(t)>>>0).toString(16) + (hash(t.split('').reverse().join(''))>>>0).toString(16); }
+
+const trTarih = s => new Date(s).toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric'});
 
 /* ══════════════ İLÇE SEÇİMİ ══════════════
    ~972 ilçe için açılır menü kullanılamaz → aramalı alan + konumdan bulma.
@@ -242,6 +273,11 @@ async function ilceleriYukle(){
   const { data, error } = await sb.from('ilceler').select('id,ad,lat,lng,iller(ad)');
   if(error){ console.error(error); return; }
   ILCELER = data.map(x => ({ id:x.id, ad:x.ad, il:x.iller?x.iller.ad:'', k:[x.lat,x.lng] }));
+  const kayitli = localStorage.getItem('hq_ilce');
+  if(kayitli){
+    const x = ILCELER.find(i => i.id === kayitli);
+    if(x) ilceSec(x.id, x.ad, x.il, 'kayitli');
+  }
 }
 
 function ilceAra(q){
@@ -257,13 +293,14 @@ function ilceAra(q){
 
 function ilceSec(id, ad, ilAdi, kaynak){
   ilceId = id; ilce = ad; il = ilAdi;
+  localStorage.setItem('hq_ilce', id);   // bir dahaki gelişte hatırlansın
   document.getElementById('ilce-sonuc').innerHTML = '';
   document.getElementById('ilce-ara').value = '';
+  const etiket = kaynak==='konum' ? 'konumdan' : (kaynak==='kayitli' ? 'kayıtlı' : '');
   document.getElementById('secili-kutu').innerHTML =
     `<div class="secili">✓ <b>${ad}</b> <span style="color:var(--soft)">/ ${ilAdi}</span>
-       ${kaynak==='konum' ? '<span class="sec" style="margin-left:auto">konumdan</span>' : ''}</div>`;
-  const b = document.getElementById('basla-btn');
-  b.disabled = false; b.textContent = 'Başla';
+       ${etiket ? `<span class="sec" style="margin-left:auto">${etiket}</span>` : ''}</div>`;
+  sayacKur();
 }
 
 function konumBul(){
@@ -294,6 +331,63 @@ function konumBul(){
   );
 }
 
+/* ══════════════ GERİ SAYIM ══════════════
+   Sunucu zamanı esas alınır: istemci saatiyle arasındaki FARK bir kez ölçülür, sayaç ona göre
+   işler. Telefonun saati yanlış olsa bile açılış anı kaymaz (quiz_plani.md §2). */
+let saatFarki = 0, hedefZaman = null, sayacTik = null;
+
+function sunucuSimdi(){ return Date.now() + saatFarki; }
+
+function sureBicimle(ms){
+  const sn = Math.max(0, Math.floor(ms/1000));
+  const gun = Math.floor(sn/86400), saat = Math.floor((sn%86400)/3600);
+  const dk = Math.floor((sn%3600)/60), s = sn%60;
+  if(gun > 0)  return `${gun} gün ${saat} saat`;
+  if(saat > 0) return `${saat} saat ${String(dk).padStart(2,'0')} dk`;
+  return `${String(dk).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+async function sayacKur(){
+  clearInterval(sayacTik);
+  const kart = document.getElementById('sayac-kart');
+  const btn  = document.getElementById('basla-btn');
+  const { data } = await sb.rpc('sonraki_kahutbe', { p_ilce_id: ilceId });
+
+  if(!data || !data.hedef){
+    kart.style.display = 'none';
+    btn.disabled = !TEST_MODE;
+    btn.textContent = TEST_MODE ? 'Başla (test)' : 'Vakit bilgisi yok';
+    return;
+  }
+
+  saatFarki   = new Date(data.sunucu_zamani).getTime() - Date.now();
+  hedefZaman  = new Date(data.hedef).getTime();
+  kart.style.display = 'block';
+  document.getElementById('sayac-etiket').textContent =
+    `${ilce} · ${trTarih(data.hedef_tarih)} öğle vakti`;
+  sayacTik = setInterval(sayacCiz, 1000);
+  sayacCiz();
+}
+
+function sayacCiz(){
+  const kalan = hedefZaman - sunucuSimdi();
+  const el = document.getElementById('sayac');
+  const btn = document.getElementById('basla-btn');
+
+  if(kalan <= 0){
+    clearInterval(sayacTik);
+    el.textContent = 'Kahutbe açık!';
+    el.classList.add('yakin');
+    btn.disabled = false;
+    btn.textContent = 'Başla →';
+    return;
+  }
+  el.textContent = sureBicimle(kalan);
+  el.classList.toggle('yakin', kalan < 3600000);   // son 1 saat vurgulu
+  btn.disabled = !TEST_MODE;
+  btn.textContent = TEST_MODE ? 'Başla (test)' : 'Kahutbe henüz başlamadı';
+}
+
 /* ══════════════ EKRAN GEÇİŞİ ══════════════ */
 function git(ad){
   clearInterval(zamanlayici);
@@ -302,73 +396,126 @@ function git(ad){
   window.scrollTo(0,0);
 }
 
-/* En son yayımlanan hutbenin başlığını giriş ekranında göster (bilgi amaçlı;
-   gerçek açık/kapalı kontrolü ilçe seçildikten sonra quiz_durumu() ile yapılır). */
-async function baslikGoster(){
-  const { data } = await sb.from('hutbeler').select('tarih,baslik').order('tarih', {ascending:false}).limit(1);
-  if(data && data[0]){
-    const t = new Date(data[0].tarih);
-    document.getElementById('g-tarih').textContent = t.toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric'}) + ' · Cuma';
-    document.getElementById('g-baslik').textContent = data[0].baslik;
+/* ══════════════ GİRİŞ EKRANINI ÇİZ ══════════════ */
+async function girisCiz(){
+  const { data, error } = await sb.rpc('hafta_durumu');
+  if(error || !data){ document.getElementById('g-pill').textContent = 'Bağlantı hatası'; return; }
+  HAFTA = data;
+
+  const pill = document.getElementById('g-pill');
+  const ust  = document.getElementById('g-ustbaslik');
+  const bas  = document.getElementById('g-baslik');
+  const acik = document.getElementById('g-aciklama');
+
+  if(data.bugunku_hutbe){
+    pill.textContent = trTarih(data.bugunku_hutbe.tarih) + ' · Cuma';
+    pill.classList.remove('gri');
+    ust.textContent = 'Bu haftanın hutbesi';
+    bas.textContent = data.bugunku_hutbe.baslik;
+    acik.innerHTML = 'Ezanla birlikte sorular açılır. Cevaplar <b style="color:var(--ink)">bu haftanın hutbesinde</b>.';
   } else {
-    document.getElementById('g-tarih').textContent = 'Bu hafta';
-    document.getElementById('g-baslik').textContent = 'Henüz hutbe eklenmedi';
+    pill.textContent = 'Beklemede';
+    pill.classList.add('gri');
+    ust.textContent = 'Bu haftanın hutbesi henüz yayımlanmadı';
+    bas.textContent = '';
+    acik.innerHTML = 'Diyanet hutbeyi genellikle Cuma’ya birkaç gün kala yayımlar. ' +
+      'O zamana kadar <b style="color:var(--ink)">geçen haftaların hutbeleriyle alıştırma yapabilirsin</b>.';
   }
+
+  // Alıştırma kartı
+  const gecmis = data.gecmis_hutbeler || [];
+  if(gecmis.length){
+    const k = document.getElementById('alistirma-kart');
+    k.style.display = 'block';
+    document.getElementById('al-baslik').textContent = gecmis[0].baslik;
+    document.getElementById('al-aciklama').textContent =
+      trTarih(gecmis[0].tarih) + ' · sıralamaya girmez, istediğin kadar dene';
+    document.getElementById('al-btn').dataset.hutbeId = gecmis[0].id;
+    document.getElementById('al-btn').dataset.baslik  = gecmis[0].baslik;
+    document.getElementById('al-btn').dataset.tarih   = gecmis[0].tarih;
+
+    document.getElementById('al-digerleri').innerHTML = gecmis.length > 1
+      ? `<p class="sec" style="margin:0 0 4px">Daha eski hutbeler</p>` + gecmis.slice(1).map(h=>`
+          <button class="arsiv-satir" onclick="alistirmaBasla('${h.id}','${h.baslik.replace(/'/g,"\\'")}','${h.tarih}')">
+            <span>${h.baslik}<br><span class="sec">${trTarih(h.tarih)}</span></span>
+            <span class="ok">▶</span>
+          </button>`).join('')
+      : '';
+  }
+
+  if(TEST_MODE) document.getElementById('demo-bilgi').textContent =
+    `bugün=${data.bugun} · bugünkü hutbe=${data.bugunku_hutbe ? 'var' : 'yok'} · arşiv=${gecmis.length}`;
 }
 
+/* ══════════════ CANLI KAHUTBE ══════════════ */
 async function girisTamam(){
   if(!ilceId) return;
   if(!takmaAd) takmaAd = adUret();
-  const durumBtn = document.getElementById('basla-btn');
+  const btn = document.getElementById('basla-btn');
   const durumEl = document.getElementById('g-durum');
-  durumBtn.disabled = true; durumBtn.textContent = 'Kontrol ediliyor…';
+  btn.disabled = true; btn.textContent = 'Kontrol ediliyor…';
 
   const { data: durum, error } = await sb.rpc('quiz_durumu', { p_ilce_id: ilceId });
-  if(error){ durumEl.textContent = 'Bağlantı hatası — az sonra tekrar dene.'; durumBtn.disabled=false; durumBtn.textContent='Başla'; return; }
-
-  if(!durum.acik && !TEST_MODE){
-    durumEl.textContent = durum.neden === 'henuz_acilmadi'
-      ? `Sorular ${ilce}'de öğle vaktinde (${durum.acilis||''}) açılacak.`
-      : 'Bu hafta için henüz veri yok.';
-    durumBtn.disabled=false; durumBtn.textContent='Başla';
-    return;
+  if(error){
+    durumEl.textContent = 'Bağlantı hatası — az sonra tekrar dene.';
+    btn.disabled=false; btn.textContent='Başla'; return;
   }
 
-  if(durum.hutbe_id){
-    HUTBE = { id: durum.hutbe_id, tarih: durum.tarih, baslik: durum.baslik };
+  if(!durum.acik){
+    if(TEST_MODE && HAFTA && HAFTA.gecmis_hutbeler.length){
+      // Test modunda canlı akışı en güncel hutbeyle taklit et
+      const h = HAFTA.gecmis_hutbeler[0];
+      HUTBE = { id:h.id, tarih:h.tarih, baslik:h.baslik };
+    } else {
+      durumEl.textContent = {
+        hutbe_yayimlanmadi: 'Bu haftanın hutbesi henüz yayımlanmadı.',
+        vakit_yok: 'Bu ilçe için vakit bilgisi bulunamadı.',
+        henuz_acilmadi: `Sorular ${ilce}'de öğle vaktinde (${durum.acilis||''}) açılacak.`
+      }[durum.neden] || 'Kahutbe şu an kapalı.';
+      sayacCiz();
+      return;
+    }
   } else {
-    // TEST_MODE'da ve o ilçe için henüz vakit/hutbe verisi yoksa: en güncel hutbeyi göster
-    const { data } = await sb.from('hutbeler').select('id,tarih,baslik').order('tarih',{ascending:false}).limit(1).single();
-    HUTBE = data;
+    HUTBE = { id: durum.hutbe_id, tarih: durum.tarih, baslik: durum.baslik };
   }
 
   const oid = await sb.rpc('oturum_baslat', {
     p_jeton_hash: jetonHash(), p_ilce_id: ilceId, p_hutbe_id: HUTBE.id, p_takma_ad: takmaAd
   });
-  if(oid.error){ durumEl.textContent = 'Oturum başlatılamadı — az sonra tekrar dene.'; durumBtn.disabled=false; durumBtn.textContent='Başla'; return; }
+  if(oid.error){
+    durumEl.textContent = 'Oturum başlatılamadı — az sonra tekrar dene.';
+    btn.disabled=false; btn.textContent='Başla'; return;
+  }
   oturumId = oid.data;
+  alistirmaMi = false;
 
-  await sorularaGit();
+  const { data, error: sErr } = await sb.from('sorular_public').select('*').eq('hutbe_id', HUTBE.id).order('sira');
+  if(sErr || !data || !data.length){ durumEl.textContent = 'Sorular yüklenemedi.'; btn.disabled=false; btn.textContent='Başla'; return; }
+  SORULAR = data;
+  sorulariCiz();
 }
 
-/* ══════════════ SORULAR (ezanla açılır — okunur VE anında cevaplanabilir) ══════════════ */
-async function sorularaGit(){
-  if(TEST_MODE && !HUTBE){
-    const { data } = await sb.from('hutbeler').select('id,tarih,baslik').order('tarih',{ascending:false}).limit(1).single();
-    if(!data) return;  // bağlantı/veri yok — sessizce çık, çökme
-    HUTBE = data;
-    if(!takmaAd) takmaAd = adUret();
-    if(!ilceId && ILCELER.length){ const k = ILCELER.find(x=>x.ad==='Kadıköy') || ILCELER[0]; ilceSec(k.id,k.ad,k.il); }
-    if(!ilceId) return;  // ilçe listesi de yüklenemediyse oturum açılamaz
-    if(!oturumId){
-      const oid = await sb.rpc('oturum_baslat', { p_jeton_hash: jetonHash(), p_ilce_id: ilceId, p_hutbe_id: HUTBE.id, p_takma_ad: takmaAd });
-      oturumId = oid.data;
-    }
-  }
-  if(!HUTBE) return;
-  const { data, error } = await sb.from('sorular_public').select('*').eq('hutbe_id', HUTBE.id).order('sira');
-  if(error || !data){ return; }
+/* ══════════════ ALIŞTIRMA (canlı değil — sunucuya hiçbir şey yazılmaz) ══════════════ */
+async function alistirmaBasla(hutbeId, baslik, tarih){
+  const btn = document.getElementById('al-btn');
+  if(!hutbeId){ hutbeId = btn.dataset.hutbeId; baslik = btn.dataset.baslik; tarih = btn.dataset.tarih; }
+  if(!hutbeId) return;
+  if(!takmaAd) takmaAd = adUret();
+
+  const { data, error } = await sb.rpc('alistirma_sorulari', { p_hutbe_id: hutbeId });
+  if(error || !data || !data.length){ alert('Bu hutbenin soruları yüklenemedi.'); return; }
+
+  alistirmaMi = true;
+  oturumId = null;
+  HUTBE = { id: hutbeId, tarih, baslik };
   SORULAR = data;
+  sorulariCiz();
+}
+
+/* ══════════════ SORULAR EKRANI (ikisi için ortak) ══════════════ */
+function sorulariCiz(){
+  document.getElementById('sr-pill').textContent = alistirmaMi ? 'Alıştırma' : 'Ezan okundu · Sorular açık';
+  document.getElementById('sr-pill').classList.toggle('gri', alistirmaMi);
   document.getElementById('sr-baslik').textContent = HUTBE.baslik || 'Bu haftanın soruları';
   document.getElementById('soru-liste').innerHTML = SORULAR.map((q,i)=>`
     <div class="card" style="padding:15px 18px">
@@ -379,8 +526,7 @@ async function sorularaGit(){
 }
 
 /* ══════════════ CEVAPLAMA ══════════════ */
-async function basla(){
-  if(!SORULAR.length) await sorularaGit();
+function basla(){
   if(!SORULAR.length) return;
   qi=0; puan=0; sonuclar=[];
   git('quiz'); soruCiz();
@@ -395,18 +541,18 @@ function soruCiz(){
   document.getElementById('q-secenekler').innerHTML = q.secenekler.map((o,i)=>
     `<button class="opt" onclick="cevapla(${i})">${o}</button>`).join('');
 
-  // Sunucu-taraflı zaman çapası: puan burada değil, soru_cevapla() içinde bu çapaya göre hesaplanır (§2.2, §9.2)
-  if(oturumId) sb.rpc('soru_ac', { p_oturum_id: oturumId, p_soru_id: q.id }).then(()=>{});
+  // Canlıda sunucu-taraflı zaman çapası: puan burada değil, soru_cevapla() içinde bu çapaya
+  // göre hesaplanır (§2.2, §9.2). Alıştırmada gerek yok.
+  if(!alistirmaMi && oturumId) sb.rpc('soru_ac', { p_oturum_id: oturumId, p_soru_id: q.id }).then(()=>{});
 
-  soruBas = Date.now();   // yerel sayaç yalnızca GÖRSEL geri sayım için
+  soruBas = Date.now();   // yerel sayaç: canlıda yalnızca GÖRSEL, alıştırmada puanın kaynağı
   const sureSn = q.sure_sn || 20;
   const bar = document.getElementById('q-bar');
   document.getElementById('q-bar-kap').classList.remove('bitti');
   bar.style.width='100%';
   clearInterval(zamanlayici);
   zamanlayici = setInterval(()=>{
-    const gecen = (Date.now()-soruBas)/1000;
-    const kalan = Math.max(0, 1 - gecen/sureSn);
+    const kalan = Math.max(0, 1 - ((Date.now()-soruBas)/1000)/sureSn);
     bar.style.width = (kalan*100)+'%';
     if(kalan<=0) cevapla(-1);            // süre doldu
   }, 100);
@@ -417,17 +563,30 @@ async function cevapla(secim){
   document.getElementById('q-bar-kap').classList.add('bitti');
   document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
   const q = SORULAR[qi];
+  let dogruIdx, dogruMu, kazanc, aciklama;
 
-  const { data, error } = await sb.rpc('soru_cevapla', {
-    p_oturum_id: oturumId, p_soru_id: q.id, p_secilen_idx: secim
-  });
-  if(error){ console.error(error); return; }
+  if(alistirmaMi){
+    // Puanlama istemcide — alıştırma sıralamaya girmediği için manipülasyon riski yok.
+    const sureSn = q.sure_sn || 20;
+    const gecen = Math.min(sureSn, (Date.now()-soruBas)/1000);
+    dogruIdx = q.dogru_idx;
+    dogruMu  = secim === dogruIdx;
+    kazanc   = dogruMu ? Math.round(1000*(1 - (gecen/sureSn)/2)) : 0;
+    aciklama = q.aciklama;
+    puan += kazanc;
+  } else {
+    const { data, error } = await sb.rpc('soru_cevapla', {
+      p_oturum_id: oturumId, p_soru_id: q.id, p_secilen_idx: secim
+    });
+    if(error){ console.error(error); return; }
+    dogruIdx = data.dogru_idx; dogruMu = data.dogru_mu;
+    kazanc = data.puan; aciklama = data.aciklama;
+    puan = data.toplam_puan;
+  }
 
-  puan = data.toplam_puan;
-  sonuclar.push({ dogru: data.dogru_mu, kazanc: data.puan, secim, dogru_idx: data.dogru_idx, aciklama: data.aciklama });
-
+  sonuclar.push({ dogru: dogruMu, kazanc, secim, dogru_idx: dogruIdx, aciklama });
   document.querySelectorAll('.opt').forEach((b,i)=>{
-    if(i===data.dogru_idx) b.classList.add('dogru');
+    if(i===dogruIdx) b.classList.add('dogru');
     else if(i===secim) b.classList.add('yanlis');
   });
   document.getElementById('q-puan').textContent = `${puan.toLocaleString('tr-TR')} puan`;
@@ -438,8 +597,8 @@ async function cevapla(secim){
   document.getElementById('q-sonraki').innerHTML = son
     ? `<button class="btn" onclick="sonucCiz()">Sonucu gör →</button>`
     : `<button class="btn" onclick="sonrakiSoru()">Sonraki soru →</button>
-       <p class="sec" style="text-align:center; margin:9px 0 0">
-         Acele etme — hatip sıradaki konuya geldiğinde aç.</p>`;
+       ${alistirmaMi ? '' : `<p class="sec" style="text-align:center; margin:9px 0 0">
+         Acele etme — hatip sıradaki konuya geldiğinde aç.</p>`}`;
 }
 
 function sonrakiSoru(){ qi++; soruCiz(); }
@@ -451,32 +610,35 @@ async function sonucCiz(){
   const kutular = sonuclar.map(r=>r.dogru?'🟢':'🔴').join('');
   document.getElementById('r-kutular').innerHTML = kutular;
   document.getElementById('r-skor').textContent = puan.toLocaleString('tr-TR')+' puan';
-  document.getElementById('r-ozet').innerHTML =
-    `${dogruSayi}/${SORULAR.length} doğru · <b>${takmaAd}</b> · ${ilce}`;
+  document.getElementById('r-pill').textContent = alistirmaMi ? 'Alıştırma tamamlandı' : 'Tamamlandı';
+  document.getElementById('r-pill').classList.toggle('gri', alistirmaMi);
+  document.getElementById('r-ozet').innerHTML = alistirmaMi
+    ? `${dogruSayi}/${SORULAR.length} doğru · <b>${takmaAd}</b> · alıştırma`
+    : `${dogruSayi}/${SORULAR.length} doğru · <b>${takmaAd}</b> · ${ilce}`;
 
   let siraMetni = '';
-  if(oturumId){
+  document.getElementById('r-siralama-kart').style.display = 'none';
+  if(!alistirmaMi && oturumId){
     const { data } = await sb.rpc('ilce_siralama', { p_hutbe_id: HUTBE.id, p_ilce_id: ilceId, p_limit: 20 });
     if(data && data.length){
-      const benimSira = data.find(r => r.takma_ad === takmaAd && r.toplam_puan === puan);
-      const kart = document.getElementById('r-siralama-kart');
-      kart.style.display = 'block';
+      const benim = data.find(r => r.takma_ad === takmaAd && r.toplam_puan === puan);
+      document.getElementById('r-siralama-kart').style.display = 'block';
       document.getElementById('r-siralama').innerHTML = data.slice(0,5).map(r => `
         <div class="siralama-satir ${r.takma_ad===takmaAd && r.toplam_puan===puan ? 'ben':''}">
           <span>${r.sira}. ${r.takma_ad}</span><span>${r.toplam_puan.toLocaleString('tr-TR')}</span>
         </div>`).join('');
-      if(benimSira) siraMetni = `\n📍 ${ilce}'de ${benimSira.sira}. sıradasın`;
+      if(benim) siraMetni = `\n📍 ${ilce}'de ${benim.sira}. sıradasın`;
     }
   }
 
   // Wordle modeli: dağıtımın ana kanalı bu kart (quiz_plani.md §7)
   document.getElementById('r-paylas').textContent =
-`🕌 Kahutbe · ${HUTBE.baslik}
+`🕌 Kahutbe · ${HUTBE.baslik}${alistirmaMi ? ' (alıştırma)' : ''}
 
 ${kutular}  ${dogruSayi}/${SORULAR.length}
 ⚡ ${puan.toLocaleString('tr-TR')} puan${siraMetni}
 
-${takmaAd} · ${ilce}`;
+${takmaAd}${alistirmaMi ? '' : ' · ' + ilce}`;
 
   document.getElementById('r-detay').innerHTML = SORULAR.map((q,i)=>`
     <div style="padding:11px 0; border-bottom:1px solid var(--line)">
@@ -496,15 +658,16 @@ function paylas(){
 }
 
 function sifirla(){
-  qi=0; puan=0; sonuclar=[]; oturumId=null; SORULAR=[];
-  document.getElementById('r-siralama-kart').style.display='none';
+  qi=0; puan=0; sonuclar=[]; oturumId=null; SORULAR=[]; alistirmaMi=false;
+  document.getElementById('g-durum').textContent = '';
   git('giris');
+  if(ilceId) sayacKur();
 }
 
 /* ══════════════ BAŞLAT ══════════════ */
 if(sb){
+  girisCiz();
   ilceleriYukle();
-  baslikGoster();
 }
 </script>
 </body>
