@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2d5f4a">
 <title>Kahutbe</title>
-<!-- Favicon: aynı minber+hatip, SADELEŞTİRİLMİŞ — kol/telefon 32px'te leke oluyor,
-     basamak da 3'ten 2'ye indirildi. Karmaşık logo + sade ikon ayrımı standart pratiktir. -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='118' fill='%232d5f4a'/%3E%3Cg fill='%23d9a24d'%3E%3Cpath d='M150 404V280h96v42h48v42h48v40z'/%3E%3Crect x='172' y='170' width='56' height='116' rx='28'/%3E%3Ccircle cx='200' cy='138' r='32'/%3E%3C/g%3E%3C/svg%3E">
+<!-- Favicon: aynı külah+merdiven+hatip silueti, SADELEŞTİRİLMİŞ — kol ve telefon 32px'te
+     leke oluyor, hatip de biraz iriltildi. Karmaşık logo + sade ikon ayrımı standart pratiktir. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='118' fill='%232d5f4a'/%3E%3Cg fill='%23d9a24d'%3E%3Ccircle cx='194' cy='102' r='11'/%3E%3Cpath d='M194 112 246 198 142 198Z'/%3E%3Cpath d='M152 416V198h84v82l130 136z'/%3E%3Crect x='266' y='246' width='52' height='95' rx='26'/%3E%3Ccircle cx='292' cy='220' r='30'/%3E%3C/g%3E%3C/svg%3E">
 <style>
 :root{
   --bg:#faf7f0; --card:#fff; --ink:#1c2420; --soft:#6b7671; --line:#e6e1d5;
@@ -154,26 +154,29 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
 <!-- ══ GİRİŞ ══ -->
 <section id="s-giris" class="screen on">
 
-  <!-- Marka: yatay kilit — oturuş halinde telefon tutan figür + wordmark -->
+  <!-- Marka: yatay kilit — minberde telefon tutan hatip + wordmark -->
   <div class="marka">
     <svg viewBox="0 0 512 512" role="img" aria-label="Kahutbe">
       <rect width="512" height="512" rx="118" fill="#2d5f4a"/>
-      <!-- Kompozisyon +24 kaydırıldı: minber solda ağır, telefon sağa taşıyor; optik merkezleme -->
-      <g transform="translate(24,0)">
+      <!-- Kompozisyon optik merkeze alındı: kenar boşlukları ~142/142/92/96 -->
+      <g transform="translate(-6,12)">
         <g fill="#d9a24d">
-          <!-- minber: basamaklı gövde, sağa alçalır -->
-          <path d="M126 403V286h88v39h40v39h40v39h40z"/>
-          <!-- hatip: gövde -->
-          <rect x="146" y="176" width="52" height="112" rx="26"/>
-          <!-- hatip: baş -->
-          <circle cx="172" cy="146" r="30"/>
+          <!-- alem -->
+          <circle cx="200" cy="90" r="10"/>
+          <!-- külah: minberi tanımlayan konik çatı -->
+          <path d="M200 100 252 186 148 186Z"/>
+          <!-- gövde + çapraz merdiven, sağa alçalır -->
+          <path d="M158 404V186h84v82l130 136z"/>
+          <!-- hatip: merdivenin ORTASINDA, ayakları eğimin üstüne oturuyor -->
+          <rect x="276" y="240" width="44" height="87" rx="22"/>
+          <circle cx="298" cy="216" r="26"/>
           <!-- kol, öne uzanıp telefonu tutar -->
-          <path d="M196 206c18 2 32 11 44 24" fill="none" stroke="#d9a24d" stroke-width="20" stroke-linecap="round"/>
-          <!-- telefon -->
-          <rect x="234" y="196" width="36" height="56" rx="8" transform="rotate(18 252 224)"/>
+          <path d="M318 262c12 2 22 8 30 18" fill="none" stroke="#d9a24d" stroke-width="18" stroke-linecap="round"/>
+          <!-- telefon (fotoğraftaki kâğıdın yerine) -->
+          <rect x="340" y="254" width="32" height="48" rx="7" transform="rotate(16 356 278)"/>
         </g>
         <!-- telefon ekranı: rozet renginde oyuk, siluetin telefon olduğunu okutur -->
-        <rect x="240" y="203" width="24" height="42" rx="5" fill="#2d5f4a" transform="rotate(18 252 224)"/>
+        <rect x="346" y="260" width="20" height="36" rx="4" fill="#2d5f4a" transform="rotate(16 356 278)"/>
       </g>
     </svg>
     <div class="ad"><span class="ka">Ka</span><i>hutbe</i></div>
