@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2d5f4a">
 <title>Kahutbe</title>
-<!-- Favicon: aynı külah+merdiven+hatip silueti, SADELEŞTİRİLMİŞ — kol ve telefon 32px'te
-     leke oluyor, hatip de biraz iriltildi. Karmaşık logo + sade ikon ayrımı standart pratiktir. -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='118' fill='%232d5f4a'/%3E%3Cg fill='%23d9a24d'%3E%3Ccircle cx='194' cy='102' r='11'/%3E%3Cpath d='M194 112 246 198 142 198Z'/%3E%3Cpath d='M152 416V198h84v82l130 136z'/%3E%3Crect x='266' y='246' width='52' height='95' rx='26'/%3E%3Ccircle cx='292' cy='220' r='30'/%3E%3C/g%3E%3C/svg%3E">
+<!-- Favicon: resimli siluet yerine harf. 16-32px'te siluetler okunmuyor, harfler okunur;
+     wordmark'la da tutarlı (yeşil zemin + altın K). -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='118' fill='%232d5f4a'/%3E%3Ctext x='256' y='366' font-family='system-ui,Segoe UI,Roboto,sans-serif' font-size='360' font-weight='800' fill='%23d9a24d' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
 <style>
 :root{
   --bg:#faf7f0; --card:#fff; --ink:#1c2420; --soft:#6b7671; --line:#e6e1d5;
@@ -48,21 +48,32 @@ input[type=text]{width:100%; min-height:48px; padding:12px 14px; border-radius:1
    "bu bir yarışma" hissi. Bunu kategori konvansiyonlarıyla (kalın yuvarlak tipografi,
    doygun renk alanı, rozet formu) ve ürünün kendi paletiyle (yeşil + altın) kuruyoruz.
    Rozet aynı zamanda Faz 2'nin PWA ikonu olarak kullanılabilir. */
-/* Yatay kilit: logo + wordmark yan yana — dikeyde ~36px kazandırır (tek ekran hedefi) */
-.marka{display:flex; align-items:center; justify-content:center; gap:11px; padding:8px 0 6px}
-.marka svg{width:52px; height:52px; display:block; flex:none;
-  filter:drop-shadow(0 4px 10px rgba(45,95,74,.25))}
+/* Marka artık yalnızca wordmark — resimli logo kaldırıldı */
+.marka{text-align:center; padding:10px 0 8px}
 .marka .ad{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  font-size:34px; font-weight:800; letter-spacing:-.025em; line-height:1;
+  font-size:38px; font-weight:800; letter-spacing:-.025em; line-height:1;
   color:var(--green)}
 @media (prefers-color-scheme: dark){ .marka .ad{color:#e9e4d8} }
 .marka .ad i{font-style:normal; color:var(--gold)}
-/* "Ka" önce ayrı renkte, yavaşça belirir; sonra kelimenin geri kalanıyla aynı renge kavuşur */
+
+/* İki parçalı koreografi — "be", "Ka"nın tam tersini yapar:
+   Ka  : YUKARIDAN iner, yeşil belirir → altına döner   (vurguyu bırakır)
+   be  : AŞAĞIDAN yükselir, altın durur → yeşile döner   (vurguyu devralır)
+   Böylece vurgu rengi kelimenin başından sonuna yürür. "be" hiç kaybolmaz;
+   yoksa marka adı saniyelerce "Kahut" olarak eksik okunurdu. */
 .marka .ad .ka{display:inline-block; animation:kaGel 1.3s cubic-bezier(.2,.7,.3,1) both;
   transition:color .9s ease}
 .marka .ad .ka.esitle{color:var(--gold)}
 @keyframes kaGel{ from{opacity:0; transform:translateY(-9px)} to{opacity:1; transform:none} }
-@media (prefers-reduced-motion: reduce){ .marka .ad .ka{animation:none; transition:none} }
+
+.marka .ad .be{display:inline-block; color:var(--gold); transition:color .9s ease}
+.marka .ad .be.ayril{color:var(--green); animation:beGel 1.3s cubic-bezier(.2,.7,.3,1) both}
+@media (prefers-color-scheme: dark){ .marka .ad .be.ayril{color:#e9e4d8} }
+@keyframes beGel{ from{transform:translateY(9px)} to{transform:none} }
+
+@media (prefers-reduced-motion: reduce){
+  .marka .ad .ka, .marka .ad .be{animation:none; transition:none}
+}
 
 /* Tek satırlık tanıtım — yeni gelen ne olduğunu hemen anlasın diye üstte kalır */
 .tanit{text-align:center; font-size:15px; font-weight:600; margin:0 0 3px; color:var(--ink)}
@@ -154,32 +165,9 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
 <!-- ══ GİRİŞ ══ -->
 <section id="s-giris" class="screen on">
 
-  <!-- Marka: yatay kilit — minberde telefon tutan hatip + wordmark -->
+  <!-- Marka: yalnızca wordmark. Resimli logo kaldırıldı — 52px'te siluet okunmuyordu. -->
   <div class="marka">
-    <svg viewBox="0 0 512 512" role="img" aria-label="Kahutbe">
-      <rect width="512" height="512" rx="118" fill="#2d5f4a"/>
-      <!-- Kompozisyon optik merkeze alındı: kenar boşlukları ~142/142/92/96 -->
-      <g transform="translate(-6,12)">
-        <g fill="#d9a24d">
-          <!-- alem -->
-          <circle cx="200" cy="90" r="10"/>
-          <!-- külah: minberi tanımlayan konik çatı -->
-          <path d="M200 100 252 186 148 186Z"/>
-          <!-- gövde + çapraz merdiven, sağa alçalır -->
-          <path d="M158 404V186h84v82l130 136z"/>
-          <!-- hatip: merdivenin ORTASINDA, ayakları eğimin üstüne oturuyor -->
-          <rect x="276" y="240" width="44" height="87" rx="22"/>
-          <circle cx="298" cy="216" r="26"/>
-          <!-- kol, öne uzanıp telefonu tutar -->
-          <path d="M318 262c12 2 22 8 30 18" fill="none" stroke="#d9a24d" stroke-width="18" stroke-linecap="round"/>
-          <!-- telefon (fotoğraftaki kâğıdın yerine) -->
-          <rect x="340" y="254" width="32" height="48" rx="7" transform="rotate(16 356 278)"/>
-        </g>
-        <!-- telefon ekranı: rozet renginde oyuk, siluetin telefon olduğunu okutur -->
-        <rect x="346" y="260" width="20" height="36" rx="4" fill="#2d5f4a" transform="rotate(16 356 278)"/>
-      </g>
-    </svg>
-    <div class="ad"><span class="ka">Ka</span><i>hutbe</i></div>
+    <div class="ad"><span class="ka">Ka</span><i>hut</i><span class="be">be</span></div>
   </div>
 
   <p class="tanit">Her cuma, hutbede yarışıyoruz</p>
@@ -759,9 +747,12 @@ function sifirla(){
 }
 
 /* ══════════════ BAŞLAT ══════════════ */
-// "Ka" belirdikten (1.3s) kısa bir süre sonra "hutbe" ile aynı renge geçsin
+// Koreografi: Ka 1.3s'de iner → 1.9s'de altına dönmeye başlar → 2.8s'de biter.
+// Tam o anda "be" tersini yapmaya başlar (aşağıdan yükselir, yeşile döner).
 const kaEl = document.querySelector('.marka .ad .ka');
+const beEl = document.querySelector('.marka .ad .be');
 if(kaEl) setTimeout(()=>kaEl.classList.add('esitle'), 1900);
+if(beEl) setTimeout(()=>beEl.classList.add('ayril'), 2800);
 
 if(sb){
   girisCiz();
