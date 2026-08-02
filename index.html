@@ -211,6 +211,9 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
     </div>
 
     <div id="secili-kutu"></div>
+    <!-- Konumdan gelen öneriye alternatifler: seçimden sonra da görünür kalmalı,
+         bu yüzden konum-alani'nın DIŞINDA duruyor -->
+    <div id="konum-alt"></div>
 
     <!-- Geri sayım: ilçe seçilince belirir; cuma dışında sayfanın odak noktası -->
     <div id="sayac-kart" style="display:none">
@@ -383,6 +386,7 @@ function aramaAc(){
 function konumDegistir(){
   document.getElementById('konum-alani').style.display = 'block';
   document.getElementById('secili-kutu').innerHTML = '';
+  document.getElementById('konum-alt').innerHTML = '';
   document.getElementById('sayac-kart').style.display = 'none';
   clearInterval(sayacTik);
 }
@@ -392,6 +396,8 @@ function ilceSec(id, ad, ilAdi, kaynak){
   localStorage.setItem('hq_ilce', id);   // bir dahaki gelişte hatırlansın
   document.getElementById('ilce-sonuc').innerHTML = '';
   document.getElementById('ilce-ara').value = '';
+  // Elle arayıp seçtiyse konum alternatifleri anlamsız — temizle
+  if(kaynak !== 'konum') document.getElementById('konum-alt').innerHTML = '';
   // Seçim yapıldı → konum/arama alanını gizle, yerini sayaç alsın
   document.getElementById('konum-alani').style.display = 'none';
   // Kaynak etiketi ayrı satır yerine çipin içinde — bir satır (~22px) kazandırır
@@ -399,6 +405,42 @@ function ilceSec(id, ad, ilAdi, kaynak){
     `<div class="secili">✓ <b>${ad}</b> <span style="color:var(--soft)">/ ${ilAdi}</span>
        <button class="link-btn" style="margin-left:auto; padding:0" onclick="konumDegistir()">değiştir</button></div>`;
   sayacKur();
+}
+
+/* Enlem ve boylam farkı DOĞRUDAN karşılaştırılamaz: 40° enlemde 1° boylam ≈ 85 km,
+   1° enlem ≈ 111 km. Ölçeklemezsek doğu-batı farklar ~%30 fazla ağırlık alır ve
+   merkezin batısındaki geniş ilçeler (ör. Yenimahalle) haksız yere elenir. */
+function kmUzaklik(lat1, lng1, lat2, lng2){
+  const dLat = (lat2 - lat1) * 111.32;
+  const dLng = (lng2 - lng1) * 111.32 * Math.cos(lat1 * Math.PI / 180);
+  return Math.hypot(dLat, dLng);
+}
+
+function enYakinIlceler(la, lo, adet){
+  return ILCELER
+    .filter(x => x.k[0] != null && x.k[1] != null)
+    .map(x => ({ ...x, uz: kmUzaklik(la, lo, x.k[0], x.k[1]) }))
+    .sort((a, b) => a.uz - b.uz)
+    .slice(0, adet);
+}
+
+/* Elimizde ilçe SINIRLARI (poligon) değil, ilçe başına tek bir MERKEZ NOKTASI var.
+   Geniş ilçelerin kenarlarında en yakın merkez, kişinin gerçekte bulunduğu ilçe
+   olmayabiliyor; ayrıca konum Wi-Fi/hücreden gelirse şehir merkezine yakın kaba bir
+   nokta döner. Bu yüzden sonuç kesin bir atama değil, DÜZELTİLEBİLİR bir öneri. */
+function konumAlternatifleri(yakinlar, kesinlikM){
+  const kutu = document.getElementById('konum-alt');
+  const digerleri = yakinlar.slice(1);
+  if(!digerleri.length){ kutu.innerHTML = ''; return; }
+  const kaba = kesinlikM && kesinlikM > 3000;
+  // Tek akışkan satır: etiket + adlar yan yana. İki ayrı blok ~77px yiyordu, bu ~45px.
+  kutu.innerHTML =
+    `<p class="sec" style="text-align:center; margin:0 0 8px; font-size:12px; line-height:1.75">
+       ${kaba ? 'Kabaca alındı — değilsen: ' : 'Değilsen: '}` +
+    digerleri.map(x =>
+      `<button class="link-btn" style="padding:0 4px"
+         onclick="ilceSec('${x.id}','${x.ad}','${x.il}','konum')">${x.ad}</button>`).join('·') +
+    `</p>`;
 }
 
 function konumBul(){
@@ -409,23 +451,20 @@ function konumBul(){
   navigator.geolocation.getCurrentPosition(
     pos => {
       // Koordinat yalnızca burada, bellekte kullanılır; hiçbir yere yazılmaz.
-      const {latitude:la, longitude:lo} = pos.coords;
-      let en=null, enUz=Infinity;
-      for(const x of ILCELER){
-        if(x.k[0]==null || x.k[1]==null) continue;
-        const uz = Math.hypot(x.k[0]-la, x.k[1]-lo);
-        if(uz<enUz){ enUz=uz; en=x; }
-      }
+      const { latitude:la, longitude:lo, accuracy:kesinlik } = pos.coords;
+      // Kaba konumda doğru ilçe 4. sıraya bile düşebiliyor; kesinlik zayıfsa aday sayısını artır
+      const yakinlar = enYakinIlceler(la, lo, (kesinlik && kesinlik > 3000) ? 5 : 4);
       d.textContent = '';
-      if(en) ilceSec(en.id, en.ad, en.il, 'konum');
-      else d.textContent = 'Yakın ilçe bulunamadı — aşağıdan arayabilirsin.';
+      if(!yakinlar.length){ d.textContent = 'Yakın ilçe bulunamadı — aşağıdan arayabilirsin.'; return; }
+      ilceSec(yakinlar[0].id, yakinlar[0].ad, yakinlar[0].il, 'konum');
+      konumAlternatifleri(yakinlar, kesinlik);
     },
     err => {
       d.textContent = err.code===1
         ? 'Konum izni verilmedi — aşağıdan arayabilirsin.'
         : 'Konum alınamadı — aşağıdan arayabilirsin.';
     },
-    {timeout:8000, maximumAge:300000}
+    {enableHighAccuracy:true, timeout:10000, maximumAge:60000}
   );
 }
 
