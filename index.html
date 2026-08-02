@@ -12,10 +12,13 @@
 :root{
   --bg:#faf7f0; --card:#fff; --ink:#1c2420; --soft:#6b7671; --line:#e6e1d5;
   --gold:#b8863a; --green:#2d5f4a; --dogru:#2d7d5a; --yanlis:#b5502f;
+  /* Wordmark'ın vurgusuz rengi — koyu temada yeşil zemine karışacağı için ayrı değişken */
+  --marka-notr:#2d5f4a;
   --r:16px;
 }
 @media (prefers-color-scheme: dark){
-  :root{ --bg:#141b18; --card:#1c2622; --ink:#eceae2; --soft:#9aa39d; --line:#2b3733; --gold:#d9a24d; }
+  :root{ --bg:#141b18; --card:#1c2622; --ink:#eceae2; --soft:#9aa39d; --line:#2b3733; --gold:#d9a24d;
+         --marka-notr:#e9e4d8; }
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
 body{margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -52,27 +55,39 @@ input[type=text]{width:100%; min-height:48px; padding:12px 14px; border-radius:1
 .marka{text-align:center; padding:10px 0 8px}
 .marka .ad{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   font-size:38px; font-weight:800; letter-spacing:-.025em; line-height:1;
-  color:var(--green)}
-@media (prefers-color-scheme: dark){ .marka .ad{color:#e9e4d8} }
+  color:var(--marka-notr)}
 .marka .ad i{font-style:normal; color:var(--gold)}
 
-/* İki parçalı koreografi — "be", "Ka"nın tam tersini yapar:
-   Ka  : YUKARIDAN iner, yeşil belirir → altına döner   (vurguyu bırakır)
-   be  : AŞAĞIDAN yükselir, altın durur → yeşile döner   (vurguyu devralır)
-   Böylece vurgu rengi kelimenin başından sonuna yürür. "be" hiç kaybolmaz;
-   yoksa marka adı saniyelerce "Kahut" olarak eksik okunurdu. */
+/* ── GİRİŞ (bir kez) — "be", "Ka"nın tam tersini yapar ──
+   Ka : YUKARIDAN iner, nötr belirir → altına döner  (vurguyu bırakır)
+   be : AŞAĞIDAN yükselir, altın durur → nötre döner (vurguyu devralır)
+   "be" hiç kaybolmaz; yoksa marka adı saniyelerce "Kahut" okunurdu. */
 .marka .ad .ka{display:inline-block; animation:kaGel 1.3s cubic-bezier(.2,.7,.3,1) both;
   transition:color .9s ease}
 .marka .ad .ka.esitle{color:var(--gold)}
 @keyframes kaGel{ from{opacity:0; transform:translateY(-9px)} to{opacity:1; transform:none} }
 
 .marka .ad .be{display:inline-block; color:var(--gold); transition:color .9s ease}
-.marka .ad .be.ayril{color:var(--green); animation:beGel 1.3s cubic-bezier(.2,.7,.3,1) both}
-@media (prefers-color-scheme: dark){ .marka .ad .be.ayril{color:#e9e4d8} }
+.marka .ad .be.ayril{color:var(--marka-notr); animation:beGel 1.3s cubic-bezier(.2,.7,.3,1) both}
 @keyframes beGel{ from{transform:translateY(9px)} to{transform:none} }
 
+/* ── SONSUZ DÖNGÜ — giriş bittiğinde devralır ──
+   Tek keyframe, iki heceye ters fazda uygulanır (negatif gecikmeyle yarım devir kaydırma):
+   biri altınken diğeri nötr, vurgu sürekli gidip gelir.
+   Yükselme/alçalma devrin 25 ve 75'inde; 0 ve 50'de ikisi de y=0 olduğu için
+   girişin bittiği andaki duruşla birebir örtüşür, geçişte sıçrama olmaz. */
+.marka .ad .ka.dongu, .marka .ad .be.dongu{ animation:vurgu 4.5s ease-in-out infinite; transition:none }
+.marka .ad .be.dongu{ animation-delay:-2.25s }
+@keyframes vurgu{
+  0%,100%{ color:var(--gold);       transform:translateY(0) }
+  25%    {                          transform:translateY(-6px) }
+  50%    { color:var(--marka-notr); transform:translateY(0) }
+  75%    {                          transform:translateY(6px) }
+}
+
 @media (prefers-reduced-motion: reduce){
-  .marka .ad .ka, .marka .ad .be{animation:none; transition:none}
+  .marka .ad .ka, .marka .ad .be,
+  .marka .ad .ka.dongu, .marka .ad .be.dongu{animation:none; transition:none}
 }
 
 /* Tek satırlık tanıtım — yeni gelen ne olduğunu hemen anlasın diye üstte kalır */
@@ -748,11 +763,18 @@ function sifirla(){
 
 /* ══════════════ BAŞLAT ══════════════ */
 // Koreografi: Ka 1.3s'de iner → 1.9s'de altına dönmeye başlar → 2.8s'de biter.
-// Tam o anda "be" tersini yapmaya başlar (aşağıdan yükselir, yeşile döner).
+// Tam o anda "be" tersini yapmaya başlar (aşağıdan yükselir, nötre döner) → 4.1s'de biter.
+// Ardından sonsuz döngü devralır; tek seferlik sınıflar kaldırılır ki animasyonlar çakışmasın.
 const kaEl = document.querySelector('.marka .ad .ka');
 const beEl = document.querySelector('.marka .ad .be');
-if(kaEl) setTimeout(()=>kaEl.classList.add('esitle'), 1900);
-if(beEl) setTimeout(()=>beEl.classList.add('ayril'), 2800);
+if(kaEl && beEl){
+  setTimeout(()=>kaEl.classList.add('esitle'), 1900);
+  setTimeout(()=>beEl.classList.add('ayril'), 2800);
+  setTimeout(()=>{
+    kaEl.classList.remove('esitle'); beEl.classList.remove('ayril');
+    kaEl.classList.add('dongu');     beEl.classList.add('dongu');
+  }, 4100);
+}
 
 if(sb){
   girisCiz();
