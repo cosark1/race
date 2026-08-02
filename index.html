@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2d5f4a">
 <title>Kahutbe</title>
-<!-- Favicon: aynı oturan figür, SADELEŞTİRİLMİŞ (kol + telefon 32px'te okunmuyor, leke oluyor).
-     Karmaşık logo + sade uygulama ikonu ayrımı standart pratiktir. -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='118' fill='%232d5f4a'/%3E%3Cg fill='%23d9a24d'%3E%3Crect x='140' y='340' width='232' height='64' rx='32'/%3E%3Crect x='214' y='200' width='84' height='156' rx='34'/%3E%3Ccircle cx='256' cy='158' r='44'/%3E%3C/g%3E%3C/svg%3E">
+<!-- Favicon: aynı minber+hatip, SADELEŞTİRİLMİŞ — kol/telefon 32px'te leke oluyor,
+     basamak da 3'ten 2'ye indirildi. Karmaşık logo + sade ikon ayrımı standart pratiktir. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='118' fill='%232d5f4a'/%3E%3Cg fill='%23d9a24d'%3E%3Cpath d='M150 404V280h96v42h48v42h48v40z'/%3E%3Crect x='172' y='170' width='56' height='116' rx='28'/%3E%3Ccircle cx='200' cy='138' r='32'/%3E%3C/g%3E%3C/svg%3E">
 <style>
 :root{
   --bg:#faf7f0; --card:#fff; --ink:#1c2420; --soft:#6b7671; --line:#e6e1d5;
@@ -57,9 +57,12 @@ input[type=text]{width:100%; min-height:48px; padding:12px 14px; border-radius:1
   color:var(--green)}
 @media (prefers-color-scheme: dark){ .marka .ad{color:#e9e4d8} }
 .marka .ad i{font-style:normal; color:var(--gold)}
-.marka .ad .ka{display:inline-block; animation:kaGel .75s cubic-bezier(.2,.7,.3,1) both}
-@keyframes kaGel{ from{opacity:0; transform:translateY(-7px)} to{opacity:1; transform:none} }
-@media (prefers-reduced-motion: reduce){ .marka .ad .ka{animation:none} }
+/* "Ka" önce ayrı renkte, yavaşça belirir; sonra kelimenin geri kalanıyla aynı renge kavuşur */
+.marka .ad .ka{display:inline-block; animation:kaGel 1.3s cubic-bezier(.2,.7,.3,1) both;
+  transition:color .9s ease}
+.marka .ad .ka.esitle{color:var(--gold)}
+@keyframes kaGel{ from{opacity:0; transform:translateY(-9px)} to{opacity:1; transform:none} }
+@media (prefers-reduced-motion: reduce){ .marka .ad .ka{animation:none; transition:none} }
 
 /* Tek satırlık tanıtım — yeni gelen ne olduğunu hemen anlasın diye üstte kalır */
 .tanit{text-align:center; font-size:15px; font-weight:600; margin:0 0 3px; color:var(--ink)}
@@ -155,20 +158,23 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
   <div class="marka">
     <svg viewBox="0 0 512 512" role="img" aria-label="Kahutbe">
       <rect width="512" height="512" rx="118" fill="#2d5f4a"/>
-      <g fill="#d9a24d">
-        <!-- katlanmış bacaklar (oturuş) -->
-        <rect x="146" y="344" width="222" height="60" rx="30"/>
-        <!-- gövde, hafif öne eğik -->
-        <rect x="196" y="206" width="84" height="152" rx="34" transform="rotate(8 238 282)"/>
-        <!-- baş -->
-        <circle cx="250" cy="170" r="41"/>
-        <!-- kol, öne uzanıp telefonu tutar -->
-        <path d="M266 254c26 4 46 16 62 32" fill="none" stroke="#d9a24d" stroke-width="26" stroke-linecap="round"/>
-        <!-- telefon -->
-        <rect x="322" y="248" width="46" height="74" rx="10" transform="rotate(16 345 285)"/>
+      <!-- Kompozisyon +24 kaydırıldı: minber solda ağır, telefon sağa taşıyor; optik merkezleme -->
+      <g transform="translate(24,0)">
+        <g fill="#d9a24d">
+          <!-- minber: basamaklı gövde, sağa alçalır -->
+          <path d="M126 403V286h88v39h40v39h40v39h40z"/>
+          <!-- hatip: gövde -->
+          <rect x="146" y="176" width="52" height="112" rx="26"/>
+          <!-- hatip: baş -->
+          <circle cx="172" cy="146" r="30"/>
+          <!-- kol, öne uzanıp telefonu tutar -->
+          <path d="M196 206c18 2 32 11 44 24" fill="none" stroke="#d9a24d" stroke-width="20" stroke-linecap="round"/>
+          <!-- telefon -->
+          <rect x="234" y="196" width="36" height="56" rx="8" transform="rotate(18 252 224)"/>
+        </g>
+        <!-- telefon ekranı: rozet renginde oyuk, siluetin telefon olduğunu okutur -->
+        <rect x="240" y="203" width="24" height="42" rx="5" fill="#2d5f4a" transform="rotate(18 252 224)"/>
       </g>
-      <!-- telefon ekranı: rozet renginde oyuk, siluetin telefon olduğunu okutur -->
-      <rect x="330" y="257" width="30" height="56" rx="6" fill="#2d5f4a" transform="rotate(16 345 285)"/>
     </svg>
     <div class="ad"><span class="ka">Ka</span><i>hutbe</i></div>
   </div>
@@ -750,6 +756,10 @@ function sifirla(){
 }
 
 /* ══════════════ BAŞLAT ══════════════ */
+// "Ka" belirdikten (1.3s) kısa bir süre sonra "hutbe" ile aynı renge geçsin
+const kaEl = document.querySelector('.marka .ad .ka');
+if(kaEl) setTimeout(()=>kaEl.classList.add('esitle'), 1900);
+
 if(sb){
   girisCiz();
   ilceleriYukle();
