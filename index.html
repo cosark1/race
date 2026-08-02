@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#2d5f4a">
 <title>Kahutbe</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='118' fill='%232d5f4a'/%3E%3Cg fill='%23d9a24d'%3E%3Cpath d='M256 136c-49 0-89 40-89 89 0 4 3 7 7 7h164c4 0 7-3 7-7 0-49-40-89-89-89z'/%3E%3Crect x='176' y='252' width='160' height='130' rx='12'/%3E%3C/g%3E%3C/svg%3E">
+<!-- Favicon: aynı oturan figür, SADELEŞTİRİLMİŞ (kol + telefon 32px'te okunmuyor, leke oluyor).
+     Karmaşık logo + sade uygulama ikonu ayrımı standart pratiktir. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='118' fill='%232d5f4a'/%3E%3Cg fill='%23d9a24d'%3E%3Crect x='140' y='340' width='232' height='64' rx='32'/%3E%3Crect x='214' y='200' width='84' height='156' rx='34'/%3E%3Ccircle cx='256' cy='158' r='44'/%3E%3C/g%3E%3C/svg%3E">
 <style>
 :root{
   --bg:#faf7f0; --card:#fff; --ink:#1c2420; --soft:#6b7671; --line:#e6e1d5;
@@ -21,7 +23,7 @@ body{margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
 .wrap{max-width:520px; margin:0 auto; padding:16px}
-.card{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:20px; margin-bottom:14px}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:17px; margin-bottom:12px}
 .btn{display:block; width:100%; min-height:52px; border:none; border-radius:12px; background:var(--green);
   color:#fff; font-size:16px; font-weight:600; cursor:pointer; padding:14px; font-family:inherit}
 .btn:active{transform:scale(.985)}
@@ -46,30 +48,39 @@ input[type=text]{width:100%; min-height:48px; padding:12px 14px; border-radius:1
    "bu bir yarışma" hissi. Bunu kategori konvansiyonlarıyla (kalın yuvarlak tipografi,
    doygun renk alanı, rozet formu) ve ürünün kendi paletiyle (yeşil + altın) kuruyoruz.
    Rozet aynı zamanda Faz 2'nin PWA ikonu olarak kullanılabilir. */
-.marka{text-align:center; padding:22px 0 18px}
-.marka svg{width:80px; height:80px; display:block; margin:0 auto 12px;
-  filter:drop-shadow(0 6px 16px rgba(45,95,74,.28))}
+/* Yatay kilit: logo + wordmark yan yana — dikeyde ~36px kazandırır (tek ekran hedefi) */
+.marka{display:flex; align-items:center; justify-content:center; gap:11px; padding:8px 0 6px}
+.marka svg{width:52px; height:52px; display:block; flex:none;
+  filter:drop-shadow(0 4px 10px rgba(45,95,74,.25))}
 .marka .ad{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  font-size:38px; font-weight:800; letter-spacing:-.025em; line-height:1;
+  font-size:34px; font-weight:800; letter-spacing:-.025em; line-height:1;
   color:var(--green)}
 @media (prefers-color-scheme: dark){ .marka .ad{color:#e9e4d8} }
 .marka .ad i{font-style:normal; color:var(--gold)}
-.marka .slogan{font-size:13.5px; color:var(--soft); margin-top:9px}
+.marka .ad .ka{display:inline-block; animation:kaGel .75s cubic-bezier(.2,.7,.3,1) both}
+@keyframes kaGel{ from{opacity:0; transform:translateY(-7px)} to{opacity:1; transform:none} }
+@media (prefers-reduced-motion: reduce){ .marka .ad .ka{animation:none} }
 
-/* Karşılama: ne olduğu + ne zaman */
-.hero{background:linear-gradient(160deg, var(--green) 0%, #1f4736 100%); border:none;
-  color:#f4efe3; text-align:center}
-.hero h2{font-size:21px; line-height:1.3; margin-bottom:9px; color:#fff}
-.hero p{font-size:14.5px; line-height:1.55; margin:0; color:rgba(244,239,227,.86)}
-.hero b{color:var(--gold)}
-.cipler{display:flex; gap:7px; justify-content:center; flex-wrap:wrap; margin-top:15px}
-.cip{font-size:11.5px; font-weight:600; padding:5px 11px; border-radius:20px;
-  background:rgba(255,255,255,.13); color:rgba(244,239,227,.92)}
+/* Tek satırlık tanıtım — yeni gelen ne olduğunu hemen anlasın diye üstte kalır */
+.tanit{text-align:center; font-size:15px; font-weight:600; margin:0 0 3px; color:var(--ink)}
+/* Çip satırı yerine tek satır alt metin: ~20px kazandırır ve görsel gürültüyü azaltır */
+.tanit-alt{text-align:center; font-size:12.5px; margin:0 0 12px; color:var(--soft)}
+
+/* Katlanır arşiv — açık listede 2 satır ~110px yiyor, tek ekran hedefini bozuyordu */
+details.arsiv summary{list-style:none; cursor:pointer; font-size:13px; color:var(--soft);
+  padding:9px 2px 2px; text-align:center}
+details.arsiv summary::-webkit-details-marker{display:none}
+details.arsiv[open] summary{color:var(--ink)}
+
+/* Bağlantı görünümlü buton (ilçe aramayı açar / seçimi değiştirir) */
+.link-btn{background:none; border:none; padding:6px 2px; font-family:inherit; font-size:13px;
+  color:var(--gold); cursor:pointer; text-decoration:underline; text-underline-offset:3px}
 
 /* Geri sayım */
-.sayac-kutu{text-align:center; padding:4px 0 2px}
-.sayac{font-family:Georgia,serif; font-size:34px; font-weight:600; color:var(--green);
-  letter-spacing:.5px; line-height:1.2}
+.sayac-kutu{text-align:center; padding:2px 0 0}
+/* Cuma dışındaki günlerde sayfanın odak noktası bu — bilinçli olarak büyük */
+.sayac{font-family:Georgia,serif; font-size:40px; font-weight:600; color:var(--green);
+  letter-spacing:.5px; line-height:1.15}
 @media (prefers-color-scheme: dark){ .sayac{color:var(--gold)} }
 .sayac.yakin{color:var(--gold)}
 .sayac-etiket{font-size:12.5px; color:var(--soft); margin-top:2px}
@@ -78,8 +89,8 @@ input[type=text]{width:100%; min-height:48px; padding:12px 14px; border-radius:1
   border-radius:10px; padding:12px 14px; margin-bottom:6px; font-size:15px; cursor:pointer;
   color:var(--ink); font-family:inherit}
 .ilce-sec:active{background:var(--bg)}
-.secili{display:flex; align-items:center; gap:8px; background:rgba(45,95,74,.1);
-  border:1.5px solid var(--green); border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:15px}
+.secili{display:flex; align-items:center; gap:7px; background:rgba(45,95,74,.1);
+  border:1.5px solid var(--green); border-radius:12px; padding:9px 12px; margin-bottom:8px; font-size:14.5px}
 
 /* Arşiv/alıştırma listesi */
 .arsiv-satir{display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -140,61 +151,56 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
 <!-- ══ GİRİŞ ══ -->
 <section id="s-giris" class="screen on">
 
-  <!-- Marka: yeşil squircle rozet + kubbe/minare silueti + kalın wordmark -->
+  <!-- Marka: yatay kilit — oturuş halinde telefon tutan figür + wordmark -->
   <div class="marka">
     <svg viewBox="0 0 512 512" role="img" aria-label="Kahutbe">
       <rect width="512" height="512" rx="118" fill="#2d5f4a"/>
       <g fill="#d9a24d">
-        <!-- kubbe + alem -->
-        <path d="M256 128c-8 0-14 6-14 14 0 6 3 10 8 12v14c-45 8-78 45-78 90 0 4 3 7 7 7h154c4 0 7-3 7-7 0-45-33-82-78-90v-14c5-2 8-6 8-12 0-8-6-14-14-14z"/>
-        <!-- gövde — kubbe tabanıyla (y=265) birleşsin diye 262'den başlar, boşluk kalmaz -->
-        <rect x="164" y="262" width="184" height="134" rx="12"/>
-        <!-- minareler -->
-        <path d="M126 200c-6 0-10 5-10 11 0 4 2 7 5 9v176h10V220c3-2 5-5 5-9 0-6-4-11-10-11z"/>
-        <path d="M386 200c-6 0-10 5-10 11 0 4 2 7 5 9v176h10V220c3-2 5-5 5-9 0-6-4-11-10-11z"/>
+        <!-- katlanmış bacaklar (oturuş) -->
+        <rect x="146" y="344" width="222" height="60" rx="30"/>
+        <!-- gövde, hafif öne eğik -->
+        <rect x="196" y="206" width="84" height="152" rx="34" transform="rotate(8 238 282)"/>
+        <!-- baş -->
+        <circle cx="250" cy="170" r="41"/>
+        <!-- kol, öne uzanıp telefonu tutar -->
+        <path d="M266 254c26 4 46 16 62 32" fill="none" stroke="#d9a24d" stroke-width="26" stroke-linecap="round"/>
+        <!-- telefon -->
+        <rect x="322" y="248" width="46" height="74" rx="10" transform="rotate(16 345 285)"/>
       </g>
+      <!-- telefon ekranı: rozet renginde oyuk, siluetin telefon olduğunu okutur -->
+      <rect x="330" y="257" width="30" height="56" rx="6" fill="#2d5f4a" transform="rotate(16 345 285)"/>
     </svg>
-    <div class="ad">Ka<i>hutbe</i></div>
-    <div class="slogan">Hutbeyi dinle, cevabı yakala</div>
+    <div class="ad"><span class="ka">Ka</span><i>hutbe</i></div>
   </div>
 
-  <!-- Karşılama: ne olduğu + ne zaman burada olunmalı -->
-  <div class="card hero">
-    <h2>Her cuma, hutbede yarışıyoruz</h2>
-    <p>
-      Hatip anlattıkça cevapları yakala, ilçendeki cemaatle yarış.<br>
-      Sorular <b>cuma ezanıyla birlikte</b> açılır — o an burada ol.
-    </p>
-    <div class="cipler">
-      <span class="cip">Anonim</span>
-      <span class="cip">Kayıt yok</span>
-      <span class="cip">5 soru · 20'şer saniye</span>
-    </div>
-  </div>
+  <p class="tanit">Her cuma, hutbede yarışıyoruz</p>
+  <p class="tanit-alt">Anonim · kayıt yok · 5 soru, 20'şer saniye</p>
 
   <div id="giris-kartlar">
 
-  <!-- Bu haftanın durumu -->
-  <div class="card" id="durum-kart">
-    <span class="pill" id="g-pill">Yükleniyor…</span>
-    <h1 style="font-size:25px; margin:12px 0 6px" id="g-ustbaslik">Bu haftanın hutbesi</h1>
-    <h2 style="font-size:19px; color:var(--gold); margin-bottom:14px" id="g-baslik"></h2>
-    <p class="sec" id="g-aciklama" style="margin:0"></p>
-  </div>
-
-  <!-- İlçe + geri sayım -->
+  <!-- Durum + ilçe + geri sayım TEK KARTTA: ikisi de "ne zaman oynayabilirim?"i cevaplıyordu -->
   <div class="card" id="ilce-kart">
-    <label class="sec" id="ilce-etiket" style="display:block; margin-bottom:8px">Nerede namaz kılıyorsun?</label>
-    <button class="btn alt" onclick="konumBul()">📍 Konumumu kullan</button>
-    <p class="sec" id="konum-durum" style="margin:8px 0 0; text-align:center"></p>
+    <span class="pill" id="g-pill">Yükleniyor…</span>
+    <h1 style="font-size:18.5px; line-height:1.3; margin:11px 0 4px" id="g-ustbaslik">Bu haftanın hutbesi</h1>
+    <h2 style="font-size:20px; color:var(--gold); margin-bottom:14px" id="g-baslik"></h2>
 
-    <p class="sec" style="text-align:center; margin:12px 0 8px; opacity:.7">— veya —</p>
-    <input type="text" id="ilce-ara" placeholder="İlçe ara (ör. Kadıköy)" autocomplete="off"
-           oninput="ilceAra(this.value)">
-    <div id="ilce-sonuc" style="margin-top:8px"></div>
+    <!-- Konum seçimi: ilçe seçilene kadar görünür, sonra gizlenir (yer kazancı) -->
+    <div id="konum-alani">
+      <button class="btn alt" onclick="konumBul()">📍 Konumumu kullan</button>
+      <p class="sec" id="konum-durum" style="margin:8px 0 0; text-align:center"></p>
+      <div style="text-align:center">
+        <button class="link-btn" id="arama-ac" onclick="aramaAc()">veya ilçeni ara</button>
+      </div>
+      <div id="arama-alani" style="display:none">
+        <input type="text" id="ilce-ara" placeholder="İlçe ara (ör. Kadıköy)" autocomplete="off"
+               oninput="ilceAra(this.value)">
+        <div id="ilce-sonuc" style="margin-top:8px"></div>
+      </div>
+    </div>
+
     <div id="secili-kutu"></div>
 
-    <!-- Geri sayım: ilçe seçilince belirir -->
+    <!-- Geri sayım: ilçe seçilince belirir; cuma dışında sayfanın odak noktası -->
     <div id="sayac-kart" style="display:none">
       <div class="sayac-kutu">
         <div class="sayac" id="sayac">—</div>
@@ -202,12 +208,12 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
       </div>
     </div>
 
-    <button class="btn" id="basla-btn" onclick="girisTamam()" disabled style="margin-top:14px">
+    <button class="btn" id="basla-btn" onclick="girisTamam()" disabled style="margin-top:12px">
       Önce ilçeni seç
     </button>
-    <p class="sec" id="g-durum" style="margin:12px 0 0; text-align:center"></p>
-    <p class="sec" style="margin:6px 0 0; text-align:center">
-      Kayıt yok, isim yok. Konumun yalnızca ilçeni bulmak için kullanılır, <b style="color:var(--ink)">kaydedilmez</b>.
+    <p class="sec" id="g-durum" style="margin:10px 0 0; text-align:center"></p>
+    <p class="sec" style="margin:8px 0 0; text-align:center; font-size:12px">
+      Kayıt yok, isim yok — konumun <b style="color:var(--ink)">kaydedilmez</b>.
     </p>
   </div>
 
@@ -217,7 +223,10 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
     <h3 style="font-size:17px; margin:10px 0 6px" id="al-baslik"></h3>
     <p class="sec" style="margin:0 0 14px" id="al-aciklama"></p>
     <button class="btn gold" id="al-btn" onclick="alistirmaBasla()">Alıştırma yap</button>
-    <div id="al-digerleri" style="margin-top:16px"></div>
+    <details class="arsiv" id="al-arsiv" style="display:none">
+      <summary>Daha eski hutbeler ▾</summary>
+      <div id="al-digerleri"></div>
+    </details>
   </div>
 
   </div><!-- /giris-kartlar -->
@@ -280,9 +289,7 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
   </div>
 </section>
 
-<p class="sec" style="text-align:center; padding:6px 0 30px">
-  🕌 Kahutbe
-</p>
+<!-- Alt bilgideki marka tekrarı kaldırıldı: logo zaten en üstte ve 82px yiyordu (tek ekran hedefi) -->
 </div>
 </div>
 
@@ -354,15 +361,31 @@ function ilceAra(q){
     : '<p class="sec" style="padding:6px 2px">Sonuç yok</p>';
 }
 
+// İlçe arama kutusu başta gizli: ilk gelen için ~68px yer kazandırır (tek ekran hedefi).
+function aramaAc(){
+  document.getElementById('arama-alani').style.display = 'block';
+  document.getElementById('arama-ac').style.display = 'none';
+  document.getElementById('ilce-ara').focus();
+}
+
+function konumDegistir(){
+  document.getElementById('konum-alani').style.display = 'block';
+  document.getElementById('secili-kutu').innerHTML = '';
+  document.getElementById('sayac-kart').style.display = 'none';
+  clearInterval(sayacTik);
+}
+
 function ilceSec(id, ad, ilAdi, kaynak){
   ilceId = id; ilce = ad; il = ilAdi;
   localStorage.setItem('hq_ilce', id);   // bir dahaki gelişte hatırlansın
   document.getElementById('ilce-sonuc').innerHTML = '';
   document.getElementById('ilce-ara').value = '';
-  const etiket = kaynak==='konum' ? 'konumdan' : (kaynak==='kayitli' ? 'kayıtlı' : '');
+  // Seçim yapıldı → konum/arama alanını gizle, yerini sayaç alsın
+  document.getElementById('konum-alani').style.display = 'none';
+  // Kaynak etiketi ayrı satır yerine çipin içinde — bir satır (~22px) kazandırır
   document.getElementById('secili-kutu').innerHTML =
     `<div class="secili">✓ <b>${ad}</b> <span style="color:var(--soft)">/ ${ilAdi}</span>
-       ${etiket ? `<span class="sec" style="margin-left:auto">${etiket}</span>` : ''}</div>`;
+       <button class="link-btn" style="margin-left:auto; padding:0" onclick="konumDegistir()">değiştir</button></div>`;
   sayacKur();
 }
 
@@ -468,33 +491,18 @@ async function girisCiz(){
   const pill = document.getElementById('g-pill');
   const ust  = document.getElementById('g-ustbaslik');
   const bas  = document.getElementById('g-baslik');
-  const acik = document.getElementById('g-aciklama');
-
-  // Kart sırası duruma göre: birincil eylem her zaman üstte.
-  // Cuma/hutbe varsa → canlı quiz (ilçe kartı) öne; yoksa → alıştırma öne.
-  const kaplar = document.getElementById('giris-kartlar');
-  const dK = document.getElementById('durum-kart');
-  const iK = document.getElementById('ilce-kart');
-  const aK = document.getElementById('alistirma-kart');
-  (data.bugunku_hutbe ? [dK, iK, aK] : [dK, aK, iK]).forEach(el => kaplar.appendChild(el));
-
-  document.getElementById('ilce-etiket').textContent = data.bugunku_hutbe
-    ? 'Nerede namaz kılıyorsun?'
-    : 'İlçeni seç — Kahutbe’ye ne kadar kaldığını gör';
 
   if(data.bugunku_hutbe){
+    pill.style.display = '';
     pill.textContent = trTarih(data.bugunku_hutbe.tarih) + ' · Cuma';
     pill.classList.remove('gri');
     ust.textContent = 'Bu haftanın hutbesi';
     bas.textContent = data.bugunku_hutbe.baslik;
-    acik.innerHTML = 'Ezanla birlikte sorular açılır. Cevaplar <b style="color:var(--ink)">bu haftanın hutbesinde</b>.';
   } else {
-    pill.textContent = 'Beklemede';
-    pill.classList.add('gri');
+    // "Beklemede" rozeti başlıkla aynı şeyi söylüyordu — gizle, ~33px kazan
+    pill.style.display = 'none';
     ust.textContent = 'Bu haftanın hutbesi henüz yayımlanmadı';
     bas.textContent = '';
-    acik.innerHTML = 'Diyanet hutbeyi genellikle Cuma’ya birkaç gün kala yayımlar. ' +
-      'O zamana kadar <b style="color:var(--ink)">geçen haftaların hutbeleriyle alıştırma yapabilirsin</b>.';
   }
 
   // Alıştırma kartı
@@ -503,14 +511,16 @@ async function girisCiz(){
     const k = document.getElementById('alistirma-kart');
     k.style.display = 'block';
     document.getElementById('al-baslik').textContent = gecmis[0].baslik;
+    // Kısa tutuluyor: "neden eski hutbe?" sorusunu üstteki başlık zaten cevaplıyor
     document.getElementById('al-aciklama').textContent =
-      trTarih(gecmis[0].tarih) + ' · sıralamaya girmez, istediğin kadar dene';
+      trTarih(gecmis[0].tarih) + ' · sıralamaya girmez';
     document.getElementById('al-btn').dataset.hutbeId = gecmis[0].id;
     document.getElementById('al-btn').dataset.baslik  = gecmis[0].baslik;
     document.getElementById('al-btn').dataset.tarih   = gecmis[0].tarih;
 
+    document.getElementById('al-arsiv').style.display = gecmis.length > 1 ? 'block' : 'none';
     document.getElementById('al-digerleri').innerHTML = gecmis.length > 1
-      ? `<p class="sec" style="margin:0 0 4px">Daha eski hutbeler</p>` + gecmis.slice(1).map(h=>`
+      ? gecmis.slice(1).map(h=>`
           <button class="arsiv-satir" onclick="alistirmaBasla('${h.id}','${h.baslik.replace(/'/g,"\\'")}','${h.tarih}')">
             <span>${h.baslik}<br><span class="sec">${trTarih(h.tarih)}</span></span>
             <span class="ok">▶</span>
