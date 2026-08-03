@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2d5f4a">
+<meta name="robots" content="noindex, nofollow">
+<title>Kahutbe · Yönetim</title>
+<style>
+:root{
+  --bg:#faf7f0; --card:#fff; --ink:#1c2420; --soft:#6b7671; --line:#e6e1d5;
+  --gold:#b8863a; --green:#2d5f4a; --dogru:#2d7d5a; --yanlis:#b5502f;
+  --marka-notr:#2d5f4a; --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#141b18; --card:#1c2622; --ink:#eceae2; --soft:#9aa39d; --line:#2b3733; --gold:#d9a24d; --marka-notr:#e9e4d8; }
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+body{margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.5;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif; font-weight:600; margin:0}
+.wrap{max-width:560px; margin:0 auto; padding:16px}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--r); padding:16px; margin-bottom:12px}
+.btn{display:block; width:100%; min-height:48px; border:none; border-radius:12px; background:var(--green);
+  color:#fff; font-size:15.5px; font-weight:600; cursor:pointer; padding:12px; font-family:inherit}
+.btn:active{transform:scale(.985)}
+.btn.alt{background:transparent; border:1.5px solid var(--line); color:var(--ink)}
+.btn.tehlike{background:var(--yanlis)}
+.btn:disabled{opacity:.4}
+.sec{font-size:13px; color:var(--soft)}
+label{display:block; font-size:13px; color:var(--soft); margin:12px 0 5px}
+label:first-child{margin-top:0}
+input[type=text],input[type=email],input[type=password],input[type=date],input[type=number],textarea{
+  width:100%; padding:11px 12px; border-radius:10px; border:1.5px solid var(--line);
+  background:var(--bg); color:var(--ink); font-size:15px; font-family:inherit}
+textarea{resize:vertical; min-height:64px}
+.screen{display:none} .screen.on{display:block}
+.satir{display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:13px 2px; border-bottom:1px solid var(--line); cursor:pointer}
+.satir:last-child{border-bottom:none}
+.satir:active{opacity:.6}
+.satir b{font-size:15px} .satir .ok{color:var(--soft); font-size:13px}
+.pill{display:inline-block; padding:3px 9px; border-radius:20px; font-size:11.5px;
+  background:rgba(184,134,58,.14); color:var(--gold); font-weight:600}
+.hata{background:rgba(181,80,47,.1); border:1px solid rgba(181,80,47,.35); border-radius:10px;
+  padding:11px 13px; font-size:13.5px; color:var(--yanlis); margin-bottom:12px}
+.soru-kart{border:1.5px solid var(--line); border-radius:12px; padding:13px; margin-bottom:10px}
+.soru-kart.eksik{border-color:var(--yanlis)}
+.secenek-satir{display:flex; align-items:center; gap:8px; margin-top:6px}
+.secenek-satir input[type=text]{flex:1}
+.secenek-satir input[type=radio]{width:20px; height:20px; flex:none}
+.ustbar{display:flex; align-items:center; gap:10px; margin-bottom:14px}
+.ustbar button{background:none; border:none; color:var(--soft); font-size:22px; cursor:pointer; padding:4px}
+.ustbar h2{flex:1; font-size:19px}
+</style>
+</head>
+<body>
+
+<div id="s-kurulum-eksik" style="display:none; padding:40px 20px; max-width:480px; margin:0 auto; text-align:center">
+  <h2 style="margin-bottom:10px">Kurulum eksik</h2>
+  <p class="sec"><code>config.js</code> doldurulmamış. Önce <code>quiz/supabase/KURULUM.md</code>'yi tamamla.</p>
+</div>
+
+<div id="app" style="display:none">
+<div class="wrap">
+
+<!-- ══ GİRİŞ ══ -->
+<section id="s-giris" class="screen on">
+  <div class="card">
+    <span class="pill">Yönetim</span>
+    <h1 style="font-size:21px; margin:10px 0 16px">Kahutbe</h1>
+    <div id="giris-hata"></div>
+    <label>E-posta</label>
+    <input type="email" id="e-posta" autocomplete="username">
+    <label>Şifre</label>
+    <input type="password" id="e-sifre" autocomplete="current-password">
+    <button class="btn" id="giris-btn" onclick="girisYap()" style="margin-top:18px">Giriş yap</button>
+  </div>
+</section>
+
+<!-- ══ HUTBE LİSTESİ ══ -->
+<section id="s-liste" class="screen">
+  <div class="ustbar">
+    <h2>Hutbeler</h2>
+    <button onclick="cikisYap()" title="Çıkış">⎋</button>
+  </div>
+  <div class="card">
+    <button class="btn" onclick="yeniHutbe()">+ Yeni hutbe ekle</button>
+  </div>
+  <div class="card" style="padding:4px 14px" id="hutbe-liste"></div>
+</section>
+
+<!-- ══ HUTBE DÜZENLE ══ -->
+<section id="s-duzenle" class="screen">
+  <div class="ustbar">
+    <button onclick="listeyeDon()">←</button>
+    <h2 id="duz-baslik">Hutbe</h2>
+  </div>
+  <div id="duz-hata"></div>
+  <div class="card">
+    <label>Tarih (o haftanın Cuması)</label>
+    <input type="date" id="f-tarih">
+    <label>Başlık</label>
+    <input type="text" id="f-baslik" placeholder="ör. Söz Ahlakı ve Sosyal Medya">
+    <label>Korpus ID</label>
+    <input type="text" id="f-korpus" placeholder="GG.AA.YYYY — site/data/metinler ile birebir aynı olmalı">
+    <p class="sec" style="margin:6px 0 0">
+      Bu, ana korpustaki (site/data/metinler/{yıl}.json) tarih anahtarıyla birebir aynı olmalı;
+      quiz sonuçlarının hutbe metniyle eşleşmesi buna bağlı.
+    </p>
+    <button class="btn" onclick="hutbeKaydet()" style="margin-top:16px">Hutbeyi kaydet</button>
+  </div>
+
+  <div class="card" id="sorular-kart" style="display:none">
+    <div class="ustbar" style="margin-bottom:10px">
+      <h2 style="font-size:16px">Sorular (<span id="soru-sayisi">0</span>/5)</h2>
+    </div>
+    <div id="soru-liste"></div>
+    <button class="btn alt" onclick="soruEkle()">+ Soru ekle</button>
+  </div>
+
+  <div class="card" id="sil-kart" style="display:none">
+    <button class="btn tehlike" onclick="hutbeSil()">Bu hutbeyi ve tüm sorularını sil</button>
+  </div>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const yapilandirmaEksik = !window.HQ_CONFIG || /SENIN-/.test(HQ_CONFIG.url) || /SENIN-/.test(HQ_CONFIG.anonKey);
+document.getElementById(yapilandirmaEksik ? 's-kurulum-eksik' : 'app').style.display = 'block';
+const sb = yapilandirmaEksik ? null : window.supabase.createClient(HQ_CONFIG.url, HQ_CONFIG.anonKey);
+
+let HUTBELER = [];
+let duzenlenenId = null;   // null = yeni hutbe
+let SORULAR = [];          // { id?, sira, metin, secenekler:[4], dogru_idx, aciklama, sure_sn, _yeni? }
+
+function git(ad){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('on'));
+  document.getElementById('s-'+ad).classList.add('on');
+  window.scrollTo(0,0);
+}
+const trTarih = s => new Date(s).toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric'});
+function hataGoster(elId, msg){
+  document.getElementById(elId).innerHTML = msg ? `<div class="hata">${msg}</div>` : '';
+}
+
+/* ══════════════ OTURUM ══════════════ */
+async function girisYap(){
+  const eposta = document.getElementById('e-posta').value.trim();
+  const sifre = document.getElementById('e-sifre').value;
+  const btn = document.getElementById('giris-btn');
+  hataGoster('giris-hata', '');
+  btn.disabled = true; btn.textContent = 'Giriş yapılıyor…';
+  const { error } = await sb.auth.signInWithPassword({ email: eposta, password: sifre });
+  btn.disabled = false; btn.textContent = 'Giriş yap';
+  if(error){ hataGoster('giris-hata', 'Giriş başarısız — e-posta/şifreni kontrol et.'); return; }
+  await listeyiYukle();
+  git('liste');
+}
+async function cikisYap(){ await sb.auth.signOut(); git('giris'); }
+
+/* ══════════════ HUTBE LİSTESİ ══════════════ */
+async function listeyiYukle(){
+  const { data, error } = await sb.from('hutbeler').select('id,tarih,baslik').order('tarih', {ascending:false});
+  if(error){ document.getElementById('hutbe-liste').innerHTML = `<div class="hata">${error.message}</div>`; return; }
+  HUTBELER = data || [];
+  document.getElementById('hutbe-liste').innerHTML = HUTBELER.length
+    ? HUTBELER.map(h => `
+        <div class="satir" onclick="hutbeAc('${h.id}')">
+          <span><b>${h.baslik}</b><br><span class="sec">${trTarih(h.tarih)}</span></span>
+          <span class="ok">›</span>
+        </div>`).join('')
+    : '<p class="sec" style="padding:12px 0">Henüz hutbe yok.</p>';
+}
+
+function yeniHutbe(){
+  duzenlenenId = null; SORULAR = [];
+  document.getElementById('duz-baslik').textContent = 'Yeni hutbe';
+  document.getElementById('f-tarih').value = '';
+  document.getElementById('f-baslik').value = '';
+  document.getElementById('f-korpus').value = '';
+  document.getElementById('sorular-kart').style.display = 'none';
+  document.getElementById('sil-kart').style.display = 'none';
+  hataGoster('duz-hata', '');
+  git('duzenle');
+}
+
+async function hutbeAc(id){
+  const h = HUTBELER.find(x => x.id === id);
+  if(!h) return;
+  duzenlenenId = id;
+  document.getElementById('duz-baslik').textContent = h.baslik;
+  document.getElementById('f-tarih').value = h.tarih;
+  document.getElementById('f-baslik').value = h.baslik;
+  document.getElementById('sil-kart').style.display = 'block';
+  hataGoster('duz-hata', '');
+
+  const { data: tam } = await sb.from('hutbeler').select('korpus_hutbe_id').eq('id', id).single();
+  document.getElementById('f-korpus').value = tam ? tam.korpus_hutbe_id : '';
+
+  const { data, error } = await sb.from('sorular').select('*').eq('hutbe_id', id).order('sira');
+  if(error){ hataGoster('duz-hata', error.message); return; }
+  SORULAR = data.map(s => ({ ...s, secenekler: s.secenekler.slice() }));
+  document.getElementById('sorular-kart').style.display = 'block';
+  soruListesiCiz();
+  git('duzenle');
+}
+
+function listeyeDon(){ listeyiYukle(); git('liste'); }
+
+/* ══════════════ HUTBE KAYDET / SİL ══════════════ */
+async function hutbeKaydet(){
+  const tarih = document.getElementById('f-tarih').value;
+  const baslik = document.getElementById('f-baslik').value.trim();
+  const korpus = document.getElementById('f-korpus').value.trim();
+  if(!tarih || !baslik || !korpus){ hataGoster('duz-hata', 'Tarih, başlık ve korpus ID zorunlu.'); return; }
+  hataGoster('duz-hata', '');
+
+  if(duzenlenenId){
+    const { error } = await sb.from('hutbeler').update({ tarih, baslik, korpus_hutbe_id: korpus }).eq('id', duzenlenenId);
+    if(error){ hataGoster('duz-hata', error.message); return; }
+    document.getElementById('duz-baslik').textContent = baslik;
+  } else {
+    const { data, error } = await sb.from('hutbeler').insert({ tarih, baslik, korpus_hutbe_id: korpus }).select('id').single();
+    if(error){ hataGoster('duz-hata', error.code === '23505' ? 'Bu tarihte zaten bir hutbe var.' : error.message); return; }
+    duzenlenenId = data.id;
+    document.getElementById('duz-baslik').textContent = baslik;
+    document.getElementById('sorular-kart').style.display = 'block';
+    document.getElementById('sil-kart').style.display = 'block';
+  }
+  soruListesiCiz();
+}
+
+async function hutbeSil(){
+  if(!duzenlenenId) return;
+  if(!confirm('Bu hutbe ve tüm soruları kalıcı olarak silinsin mi?')) return;
+  const { error } = await sb.from('hutbeler').delete().eq('id', duzenlenenId);
+  if(error){ hataGoster('duz-hata', error.message); return; }
+  listeyeDon();
+}
+
+/* ══════════════ SORULAR ══════════════
+   Kaydetme her soru satırı için AYRI: 5 soruyu tek "kaydet" ile göndermek, bir tanesi
+   hatalıyken diğerlerinin de kaybolmasına yol açar. Her soru kendi hatasını taşır. */
+function soruListesiCiz(){
+  document.getElementById('soru-sayisi').textContent = SORULAR.length;
+  document.getElementById('soru-liste').innerHTML = SORULAR.map((s, i) => `
+    <div class="soru-kart" id="soru-${i}">
+      <label style="margin-top:0">Soru ${i+1} metni</label>
+      <textarea oninput="soruAlanGuncelle(${i},'metin',this.value)">${s.metin||''}</textarea>
+      ${[0,1,2,3].map(j => `
+        <div class="secenek-satir">
+          <input type="radio" name="dogru-${i}" ${s.dogru_idx===j?'checked':''} onchange="soruAlanGuncelle(${i},'dogru_idx',${j})">
+          <input type="text" placeholder="Şık ${j+1}" value="${(s.secenekler&&s.secenekler[j])||''}"
+                 oninput="soruSecenekGuncelle(${i},${j},this.value)">
+        </div>`).join('')}
+      <label>Açıklama (cevap verildikten sonra gösterilir)</label>
+      <textarea oninput="soruAlanGuncelle(${i},'aciklama',this.value)">${s.aciklama||''}</textarea>
+      <label>Süre (saniye)</label>
+      <input type="number" value="${s.sure_sn||20}" min="5" max="60"
+             oninput="soruAlanGuncelle(${i},'sure_sn',parseInt(this.value)||20)">
+      <div style="display:flex; gap:8px; margin-top:12px">
+        <button class="btn" style="flex:1" onclick="soruKaydet(${i})">Kaydet</button>
+        <button class="btn tehlike" style="flex:0 0 auto; padding:12px 16px" onclick="soruSil(${i})">Sil</button>
+      </div>
+      <div id="soru-hata-${i}"></div>
+    </div>`).join('');
+}
+function soruAlanGuncelle(i, alan, deger){ SORULAR[i][alan] = deger; }
+function soruSecenekGuncelle(i, j, deger){
+  if(!SORULAR[i].secenekler) SORULAR[i].secenekler = ['','','',''];
+  SORULAR[i].secenekler[j] = deger;
+}
+
+function soruEkle(){
+  SORULAR.push({ sira: SORULAR.length + 1, metin:'', secenekler:['','','',''], dogru_idx:0, aciklama:'', sure_sn:20, _yeni:true });
+  soruListesiCiz();
+  document.getElementById('soru-'+(SORULAR.length-1)).scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+async function soruKaydet(i){
+  const s = SORULAR[i];
+  const hataEl = 'soru-hata-'+i;
+  if(!s.metin.trim() || s.secenekler.some(x=>!x.trim())){
+    document.getElementById(hataEl).innerHTML = '<div class="hata">Soru metni ve 4 şık da dolu olmalı.</div>'; return;
+  }
+  if(!duzenlenenId){
+    document.getElementById(hataEl).innerHTML = '<div class="hata">Önce hutbeyi kaydet.</div>'; return;
+  }
+  document.getElementById(hataEl).innerHTML = '';
+  const satir = {
+    hutbe_id: duzenlenenId, sira: s.sira, metin: s.metin.trim(),
+    secenekler: s.secenekler.map(x=>x.trim()), dogru_idx: s.dogru_idx,
+    aciklama: s.aciklama.trim(), sure_sn: s.sure_sn, tur: 'kavrayis',
+  };
+  if(s.id){
+    const { error } = await sb.from('sorular').update(satir).eq('id', s.id);
+    if(error){ document.getElementById(hataEl).innerHTML = `<div class="hata">${error.message}</div>`; return; }
+  } else {
+    const { data, error } = await sb.from('sorular').insert(satir).select('id').single();
+    if(error){
+      document.getElementById(hataEl).innerHTML =
+        `<div class="hata">${error.code==='23505' ? 'Bu sıra numarası zaten kullanılıyor.' : error.message}</div>`;
+      return;
+    }
+    s.id = data.id; delete s._yeni;
+  }
+  document.getElementById(hataEl).innerHTML = '<p class="sec" style="color:var(--dogru)">✓ Kaydedildi</p>';
+}
+
+async function soruSil(i){
+  const s = SORULAR[i];
+  if(s.id){
+    if(!confirm('Bu soru silinsin mi?')) return;
+    const { error } = await sb.from('sorular').delete().eq('id', s.id);
+    if(error){ document.getElementById('soru-hata-'+i).innerHTML = `<div class="hata">${error.message}</div>`; return; }
+  }
+  SORULAR.splice(i, 1);
+  SORULAR.forEach((s,k) => s.sira = k+1);   // sıra boşluk bırakmasın
+  soruListesiCiz();
+}
+
+/* ══════════════ BAŞLAT: oturum var mı diye kontrol et ══════════════ */
+if(sb){
+  sb.auth.getSession().then(({ data }) => {
+    if(data.session){ listeyiYukle().then(()=>git('liste')); }
+  });
+}
+</script>
+</body>
+</html>

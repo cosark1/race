@@ -67,9 +67,27 @@ Bunu haftalık otomatikleştirmenin iki yolu:
 
 ## 6. Gerçek hutbe + soru eklemek
 
-Her Perşembe, `seed_hutbe_ornek.sql`'deki kalıba benzer şekilde SQL Editor'dan yeni hutbe/soru ekle
-(ileride bunun için bir editör paneli — quiz_plani.md §10 — Faz 3'te yapılacak). `korpus_hutbe_id`,
-`site/data/metinler/{yıl}.json` dosyasındaki tarih anahtarıyla (`"GG.AA.YYYY"`) birebir aynı olmalı.
+Artık iki yol var:
+
+**A) Yönetim paneli (mobilden de kullanılabilir) — [`admin.html`](../admin.html)**
+
+1. Supabase panelinde **Authentication → Users → Add user** → kendi e-postan + bir şifre,
+   **Auto Confirm User** işaretli. (Bunu senin yapman gerekiyor — kimlik/parola oluşturma
+   benim yapabileceğim bir işlem değil.)
+2. [`04_yonetim_yetkileri.sql`](04_yonetim_yetkileri.sql) içindeki **iki**
+   `SENIN-EMAILIN@ornek.com` yerine kendi e-postanı yaz, SQL Editor'da çalıştır.
+3. Telefonundan `admin.html`'i aç (ör. `https://kahutbe.kmrn06.workers.dev/admin.html` —
+   gerçek Cloudflare adresin neyse), giriş yap. Hutbe ekle/düzenle, soruları tek tek kaydet.
+
+`admin.html` `<meta name="robots" content="noindex, nofollow">` ile arama motorlarından
+gizli ama **gizli bir URL değil** — güvenlik tamamen RLS'e dayanıyor (yalnızca kayıtlı
+e-postan yazabiliyor), sayfanın kendisi herkese açık.
+
+**B) SQL Editor (elle)**
+
+`seed_hutbe_ornek.sql`'deki kalıba benzer şekilde SQL Editor'dan ekle. Her iki yolda da
+`korpus_hutbe_id`, `site/data/metinler/{yıl}.json` dosyasındaki tarih anahtarıyla
+(`"GG.AA.YYYY"`) birebir aynı olmalı.
 
 ## Sınırlar / bilinen boşluklar
 
