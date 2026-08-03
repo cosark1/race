@@ -8,6 +8,14 @@
 <!-- Favicon: resimli siluet yerine harf. 16-32px'te siluetler okunmuyor, harfler okunur;
      wordmark'la da tutarlı (yeşil zemin + altın K). -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='118' fill='%232d5f4a'/%3E%3Ctext x='256' y='366' font-family='system-ui,Segoe UI,Roboto,sans-serif' font-size='360' font-weight='800' fill='%23d9a24d' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E">
+
+<!-- PWA: "ana ekrana ekle" — manifest Android/Chrome içindir, apple-* etiketleri iOS Safari
+     manifest'i okumadığı için ayrıca gerekir. -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kahutbe">
 <style>
 :root{
   --bg:#faf7f0; --card:#fff; --ink:#1c2420; --soft:#6b7671; --line:#e6e1d5;
@@ -105,6 +113,16 @@ details.arsiv[open] summary{color:var(--ink)}
 .link-btn{background:none; border:none; padding:6px 2px; font-family:inherit; font-size:13px;
   color:var(--gold); cursor:pointer; text-decoration:underline; text-underline-offset:3px}
 
+/* Ana ekrana ekle şeridi — tek satır, tek ekran hedefini bozmasın diye kart değil */
+.yukle-serit{display:flex; align-items:center; gap:8px; background:rgba(184,134,58,.1);
+  border:1px solid rgba(184,134,58,.3); border-radius:10px; padding:8px 10px; margin-bottom:10px;
+  font-size:12.5px; color:var(--ink)}
+.yukle-serit span{flex:1}
+.yukle-serit button.eylem{flex:none; background:var(--gold); color:#fff; border:none;
+  border-radius:7px; padding:5px 10px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit}
+.yukle-serit button.kapat{flex:none; background:none; border:none; color:var(--soft);
+  font-size:15px; cursor:pointer; padding:0 2px; line-height:1}
+
 /* Geri sayım */
 .sayac-kutu{text-align:center; padding:2px 0 0}
 /* Cuma dışındaki günlerde sayfanın odak noktası bu — bilinçli olarak büyük */
@@ -188,6 +206,10 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
   <p class="tanit">Her cuma, hutbede yarışıyoruz</p>
   <p class="tanit-alt">Anonim · kayıt yok · 5 soru, 20'şer saniye</p>
 
+  <!-- Ana ekrana ekle şeridi: yalnızca kurulabilirdiğinde/iOS'ta belirir, kapatılınca hatırlanır.
+       Tek ekran hedefini bozmasın diye tek satır, gerekmedikçe hiç DOM'a girmiyor. -->
+  <div id="yukle-serit" style="display:none"></div>
+
   <div id="giris-kartlar">
 
   <!-- Durum + ilçe + geri sayım TEK KARTTA: ikisi de "ne zaman oynayabilirim?"i cevaplıyordu -->
@@ -245,6 +267,21 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
   </div>
 
   </div><!-- /giris-kartlar -->
+
+  <p style="text-align:center; margin:-11px 0 0">
+    <button class="link-btn" style="padding:2px 2px; font-size:12px" onclick="gecmisiGor()">Geçmişim</button>
+  </p>
+</section>
+
+<!-- ══ GEÇMİŞİM ══ -->
+<section id="s-gecmis" class="screen">
+  <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px">
+    <button onclick="git('giris')" style="background:none; border:none; color:var(--soft); font-size:22px; cursor:pointer; padding:4px">←</button>
+    <h2 style="flex:1; font-size:19px; margin:0">Geçmişim</h2>
+  </div>
+  <div class="card" id="gecmis-icerik">
+    <p class="sec" style="text-align:center; padding:8px 0">Yükleniyor…</p>
+  </div>
 </section>
 
 <!-- ══ SORULAR ══ -->
@@ -874,6 +911,70 @@ if(sb){
   girisCiz();
   ilceleriYukle();
 }
+
+/* ══════════════ GEÇMİŞİM ══════════════
+   kisisel_gecmis RPC'si yalnızca BU cihazın jeton hash'iyle sorgulanabilir (schema.sql §4.8) —
+   kimliklendirici veri gerekmez, kaydı yok, sadece bu tarayıcıdaki geçmişi gösterir. */
+async function gecmisiGor(){
+  git('gecmis');
+  const kutu = document.getElementById('gecmis-icerik');
+  const { data, error } = await sb.rpc('kisisel_gecmis', { p_jeton_hash: jetonHash() });
+  if(error){ kutu.innerHTML = `<p class="sec" style="text-align:center; padding:8px 0">Yüklenemedi — az sonra tekrar dene.</p>`; return; }
+  if(!data || !data.length){
+    kutu.innerHTML = `<p class="sec" style="text-align:center; padding:8px 0">Henüz bir Kahutbe'ye katılmadın.</p>`;
+    return;
+  }
+  kutu.innerHTML = data.map(h => `
+    <div class="siralama-satir" style="display:block; padding:11px 0">
+      <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:600">
+        <span>${h.hutbe_baslik}</span><span style="color:var(--gold)">${h.toplam_puan.toLocaleString('tr-TR')}</span>
+      </div>
+      <div class="sec" style="margin-top:2px">${trTarih(h.hutbe_tarih)} · ${h.cevap_sayisi}/5 soru</div>
+    </div>`).join('');
+}
+
+/* ══════════════ PWA: ana ekrana ekle ══════════════
+   Android/Chrome: beforeinstallprompt yakalanır, programatik "Yükle" butonu gösterilir.
+   iOS Safari bu olayı HİÇ ateşlemez (Apple desteklemiyor) — orada yalnızca elle
+   "Paylaş → Ana Ekrana Ekle" talimatı gösterilir, buton yok.
+   Zaten kurulu/standalone modda çalışıyorsa şerit hiç gösterilmez. */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+
+(() => {
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if(standalone) return;
+  if(localStorage.getItem('hq_yukle_gizli') === '1') return;
+
+  const serit = document.getElementById('yukle-serit');
+  const kapat = () => { localStorage.setItem('hq_yukle_gizli', '1'); serit.style.display = 'none'; };
+
+  let ertelenenOlay = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    ertelenenOlay = e;
+    serit.className = 'yukle-serit';
+    serit.innerHTML = `<span>📲 Kahutbe'yi ana ekranına ekle</span>
+      <button class="eylem" id="yukle-btn">Yükle</button>
+      <button class="kapat" onclick="document.getElementById('yukle-serit').style.display='none'; localStorage.setItem('hq_yukle_gizli','1')">✕</button>`;
+    serit.style.display = 'flex';
+    document.getElementById('yukle-btn').onclick = async () => {
+      serit.style.display = 'none';
+      ertelenenOlay.prompt();
+      await ertelenenOlay.userChoice;
+      ertelenenOlay = null;
+    };
+  });
+
+  const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if(iOS){
+    serit.className = 'yukle-serit';
+    serit.innerHTML = `<span>📲 Ana ekrana eklemek için: Paylaş 􀈂 → Ana Ekrana Ekle</span>
+      <button class="kapat" onclick="document.getElementById('yukle-serit').style.display='none'; localStorage.setItem('hq_yukle_gizli','1')">✕</button>`;
+    serit.style.display = 'flex';
+  }
+})();
 </script>
 </body>
 </html>
