@@ -319,10 +319,27 @@ const sb = yapilandirmaEksik ? null : window.supabase.createClient(HQ_CONFIG.url
 const TEST_MODE = new URLSearchParams(location.search).has('test');
 if (TEST_MODE) document.getElementById('demo-bar').style.display = 'flex';
 
-const SIFATLAR = ['Sabırlı','Mütevazı','Cömert','Vefalı','Zarif','Nazik','Dirayetli','Kanaatkâr',
-  'Basiretli','Şefkatli','Gayretli','Sadık','Halim','Cesur','Mütefekkir','Dikkatli','Titiz','Sakin'];
-const ISIMLER = ['Ceylan','Şahin','Turna','Kırlangıç','Zeytin','Pınar','Yıldız','Şafak','Deniz',
-  'Rüzgâr','Nar','Selvi','Kekik','Çınar','Kartal','Doğan','Leylek','Bülbül'];
+const SITE = 'www.kahutbe.com';
+
+/* Takma ad havuzu — dini çağrışımlı ama KASITLI SINIRLAR var (§6 "küratörlü liste"):
+   · Esmâ-ül Hüsnâ (Rahîm, Hakîm, Kerîm…) sıfat olarak KULLANILMAZ — kula ad olmaz.
+   · Peygamber ve sahabe adları kullanılmaz — rastgele bir sıfatla eşleşmesi hürmetsizlik olur.
+   · Seçilen isimler Türkiye'de zaten yaygın kullanılan, kutsalı temsil etmeyen kelimeler. */
+const SIFATLAR = ['Sabırlı','Mütevazı','Cömert','Vefalı','Zarif','Nazik','Kanaatkâr','Basiretli',
+  'Şefkatli','Sadık','Halim','Mütefekkir','Muttaki','Mütevekkil','Ârif','Salih','Edepli',
+  'Merhametli','İhlaslı','Müstakim','Vakur','Zâkir'];
+const ISIMLER = ['Seher','Hilal','Kandil','Nur','Kevser','Tûbâ','Reyhan','Sidre','Ravza','Firdevs',
+  'Sema','Zeytin','Hurma','İncir','Nar','Selvi','Şafak','Vuslat','Bereket','Zemzem','Pınar','Çınar'];
+
+/* Paylaşım kartındaki söz — hutbe tarihinden deterministik seçilir, yani o hafta
+   herkesin kartında aynı söz çıkar. Kaynaklar Diyanet hutbe metinlerinden. */
+const SOZLER = [
+  { m:'Gönül alıcı söz sadakadır.',                                  k:'Buhârî, Cihâd, 128' },
+  { m:'Kullarıma söyle, sözün en güzelini söylesinler.',              k:'İsrâ, 17/53' },
+  { m:'Allah’a ve ahiret gününe inanan ya hayır söylesin ya da sussun.', k:'Buhârî, Edeb, 31' },
+  { m:'Cuma günü namaza çağrıldığınızda Allah’ı anmaya koşun.',       k:'Cuma, 62/9' },
+  { m:'İnsanın yanında, söylediği her sözü kaydeden bir melek vardır.', k:'Kâf, 50/18' },
+];
 
 /* ══════════════ DURUM ══════════════ */
 let ILCELER = [];                 // Supabase'den bir kez çekilip belleğe alınır — ~972 ilçe
@@ -348,6 +365,15 @@ function adUret(){ const h=hash(jeton()); return SIFATLAR[h%SIFATLAR.length]+' '
 function jetonHash(){ const t = jeton(); return (hash(t)>>>0).toString(16) + (hash(t.split('').reverse().join(''))>>>0).toString(16); }
 
 const trTarih = s => new Date(s).toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric'});
+
+// O haftanın sözü — aynı hafta herkeste aynı, her hafta sırayla değişir.
+// Tarih dizgisini hash'lemek ardışık haftalarda kümelenme yapıyordu (6 haftada 3 söz,
+// üstelik üst üste tekrar); hafta numarası doğrudan sayıldığında rotasyon tam ve tekrarsız.
+function haftaninSozu(){
+  const t = (HUTBE && HUTBE.tarih) ? new Date(HUTBE.tarih) : new Date();
+  const hafta = Math.floor(t.getTime() / 604800000);       // 604800000 ms = 7 gün
+  return SOZLER[((hafta % SOZLER.length) + SOZLER.length) % SOZLER.length];
+}
 
 /* ══════════════ İLÇE SEÇİMİ ══════════════
    ~972 ilçe için açılır menü kullanılamaz → aramalı alan + konumdan bulma.
@@ -768,13 +794,18 @@ async function sonucCiz(){
   }
 
   // Wordle modeli: dağıtımın ana kanalı bu kart (quiz_plani.md §7)
+  const soz = haftaninSozu();
   document.getElementById('r-paylas').textContent =
 `🕌 Kahutbe · ${HUTBE.baslik}${alistirmaMi ? ' (alıştırma)' : ''}
 
 ${kutular}  ${dogruSayi}/${SORULAR.length}
 ⚡ ${puan.toLocaleString('tr-TR')} puan${siraMetni}
 
-${takmaAd}${alistirmaMi ? '' : ' · ' + ilce}`;
+“${soz.m}”
+— ${soz.k}
+
+${takmaAd}${alistirmaMi ? '' : ' · ' + ilce}
+${SITE}`;
 
   document.getElementById('r-detay').innerHTML = SORULAR.map((q,i)=>`
     <div style="padding:11px 0; border-bottom:1px solid var(--line)">
