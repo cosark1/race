@@ -76,8 +76,8 @@ Artık iki yol var:
    benim yapabileceğim bir işlem değil.)
 2. [`04_yonetim_yetkileri.sql`](04_yonetim_yetkileri.sql) içindeki **iki**
    `SENIN-EMAILIN@ornek.com` yerine kendi e-postanı yaz, SQL Editor'da çalıştır.
-3. Telefonundan `admin.html`'i aç (ör. `https://kahutbe.kmrn06.workers.dev/admin.html` —
-   gerçek Cloudflare adresin neyse), giriş yap. Hutbe ekle/düzenle, soruları tek tek kaydet.
+3. Telefonundan `https://kahutbe.com/admin`'i aç, giriş yap. Hutbe ekle/düzenle, soruları
+   tek tek kaydet.
 
 `admin.html` `<meta name="robots" content="noindex, nofollow">` ile arama motorlarından
 gizli ama **gizli bir URL değil** — güvenlik tamamen RLS'e dayanıyor (yalnızca kayıtlı
