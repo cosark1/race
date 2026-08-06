@@ -753,7 +753,9 @@ async function girisTamam(){
   oturumId = oid.data;
   alistirmaMi = false;
 
-  const { data, error: sErr } = await sb.from('sorular_public').select('*').eq('hutbe_id', HUTBE.id).order('sira');
+  // sorular_public artık view değil RPC — Supabase Security Advisor'ın "security definer view"
+  // uyarısını gidermek için 07_guvenlik_sikilastirma.sql ile birlikte değiştirildi.
+  const { data, error: sErr } = await sb.rpc('sorular_public', { p_hutbe_id: HUTBE.id });
   if(sErr || !data || !data.length){ durumEl.textContent = 'Sorular yüklenemedi.'; btn.disabled=false; btn.textContent='Başla'; return; }
   SORULAR = data;
   sorulariCiz();

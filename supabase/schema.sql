@@ -113,10 +113,11 @@ group by o.id;
 -- =========================================================
 -- 3. SORULARIN GÜVENLİ GÖRÜNÜMÜ (doğru cevap sızdırılmaz)
 -- =========================================================
-
-create view sorular_public as
-select id, hutbe_id, sira, metin, secenekler, sure_sn
-from sorular;
+-- Burada BİR VIEW YOK: ilk sürüm `sorular_public` diye bir view'dı, ama Supabase Security
+-- Advisor bunu "security definer view" olarak CRITICAL işaretledi (view'lar örtük biçimde
+-- sahibinin yetkisiyle RLS'i atlar). Aynı davranış artık 07_guvenlik_sikilastirma.sql'deki
+-- açıkça SECURITY DEFINER işaretli `sorular_public(p_hutbe_id)` FONKSİYONUYLA sağlanıyor —
+-- fresh install yapıyorsan schema.sql'den sonra 07'yi de çalıştır.
 
 -- =========================================================
 -- 4. RPC FONKSİYONLARI (SECURITY DEFINER — anon rolü yalnızca bunları çağırır)
@@ -311,13 +312,17 @@ create policy "vakitler: herkes okuyabilir" on vakitler for select using (true);
 create policy "hutbeler: herkes okuyabilir" on hutbeler for select using (true);
 
 -- sorular tablosuna DOĞRUDAN select politikası yok (dogru_idx sızmasın) —
--- istemci yalnızca `sorular_public` view'ını okur, gerçek soruları RPC'ler üzerinden görür.
+-- istemci `sorular_public(p_hutbe_id)` RPC'sini çağırır (07_guvenlik_sikilastirma.sql),
+-- gerçek soruları/dogru_idx'i de diğer RPC'ler üzerinden görür.
 -- oturumlar/soru_acilislar/cevaplar tablolarına da doğrudan erişim yok — yalnızca RPC'ler (security definer) yazar/okur.
 
-grant select on iller, ilceler, vakitler, hutbeler, sorular_public to anon;
+grant select on iller, ilceler, vakitler, hutbeler to anon;
 -- v_oturum_puan İSTEMCİYE DOĞRUDAN AÇILMAZ: jeton_hash içeriyor. Sıralamalar yalnızca
 -- aşağıdaki RPC'ler (ilce_siralama/il_siralama/turkiye_siralama) üzerinden, jeton_hash
 -- sızdırılmadan sunulur.
+-- NOT: bu grant + fonksiyonların kendisi Postgres varsayılanıyla PUBLIC'e de açık kalıyordu
+-- (yeni fonksiyon = varsayılan PUBLIC execute); 07_guvenlik_sikilastirma.sql bunu kapatıp
+-- yalnızca anon'a indiriyor — fresh install'da o dosyayı da çalıştır.
 grant execute on function quiz_durumu, oturum_baslat, soru_ac, soru_cevapla,
   ilce_siralama, il_siralama, turkiye_siralama, kisisel_gecmis to anon;
 
@@ -328,4 +333,4 @@ grant usage on schema public to service_role;
 grant select, insert, update, delete on
   iller, ilceler, vakitler, hutbeler, sorular, oturumlar, soru_acilislar, cevaplar
   to service_role;
-grant select on sorular_public, v_oturum_puan to service_role;
+grant select on v_oturum_puan to service_role;
