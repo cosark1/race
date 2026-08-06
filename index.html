@@ -395,7 +395,9 @@ const sb = yapilandirmaEksik ? null : window.supabase.createClient(HQ_CONFIG.url
 const TEST_MODE = new URLSearchParams(location.search).has('test');
 if (TEST_MODE) document.getElementById('demo-bar').style.display = 'flex';
 
-const SITE = 'www.kahutbe.com';
+// www.kahutbe.com'un DNS kaydı yok (yalnızca kök alan adı Cloudflare'e bağlandı) — www'li
+// adres paylaşım kartlarında hiç açılmayan bir bağlantı olurdu.
+const SITE = 'kahutbe.com';
 
 /* Takma ad havuzu — dini çağrışımlı ama KASITLI SINIRLAR var (§6 "küratörlü liste"):
    · Esmâ-ül Hüsnâ (Rahîm, Hakîm, Kerîm…) sıfat olarak KULLANILMAZ — kula ad olmaz.
