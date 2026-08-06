@@ -346,14 +346,12 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
 
 <!-- ══ SONUÇ ══ -->
 <section id="s-sonuc" class="screen">
+  <!-- Skor — bitişte ilk görülen şey -->
   <div class="card" style="text-align:center">
     <span class="pill" id="r-pill">Tamamlandı</span>
     <div class="kutu" id="r-kutular"></div>
     <div class="skor" id="r-skor"></div>
-    <p class="sec" id="r-ozet" style="margin:2px 0 18px"></p>
-    <pre class="paylas" id="r-paylas"></pre>
-    <button class="btn" onclick="paylas()">Sonucu paylaş</button>
-    <button class="btn alt" style="margin-top:9px" onclick="sifirla()">Baştan</button>
+    <p class="sec" id="r-ozet" style="margin:2px 0 0"></p>
   </div>
   <div class="card" id="r-siralama-kart" style="display:none">
     <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:4px">
@@ -366,6 +364,16 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
     </div>
     <div id="r-siralama"></div>
   </div>
+
+  <!-- Paylaşım, sıralamanın ALTINDA: bitişteki asıl merak "kaçıncı oldum",
+       paylaşma ondan sonra gelen ikincil eylem. Önceden aradaydı ve sıralamayı
+       ekranın dışına itiyordu (kart üstü 670px, satırlar görünmüyordu). -->
+  <div class="card" style="text-align:center">
+    <pre class="paylas" id="r-paylas"></pre>
+    <button class="btn" onclick="paylas()">Sonucu paylaş</button>
+    <button class="btn alt" style="margin-top:9px" onclick="sifirla()">Baştan</button>
+  </div>
+
   <div class="card">
     <h3 style="font-size:15px; margin-bottom:10px">Doğru cevaplar</h3>
     <div id="r-detay"></div>
