@@ -171,6 +171,30 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
 .siralama-satir{display:flex; justify-content:space-between; padding:8px 0; font-size:14px;
   border-bottom:1px solid var(--line)}
 .siralama-satir.ben{color:var(--gold); font-weight:600}
+
+/* Canlı sıralama tablosu: sıra+ad · ilçe/il · puan.
+   Grid kullanılıyor ki uzun takma adlar puan sütununu kaydırmasın. */
+.siralama-baslik, .sira-satir{display:grid; grid-template-columns:1fr auto 62px; gap:8px;
+  align-items:baseline; padding:7px 0}
+.siralama-baslik{font-size:11px; color:var(--soft); text-transform:uppercase;
+  letter-spacing:.04em; border-bottom:1px solid var(--line); padding-bottom:5px}
+.siralama-baslik span:last-child, .sira-satir .puan{text-align:right}
+.sira-satir{font-size:14px; border-bottom:1px solid var(--line)}
+.sira-satir:last-child{border-bottom:none}
+.sira-satir .yer{font-size:12px; color:var(--soft); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; max-width:120px}
+.sira-satir .puan{font-variant-numeric:tabular-nums}
+.sira-satir.ben{color:var(--gold); font-weight:600}
+.sira-satir.ben .yer{color:var(--gold); opacity:.8}
+.sira-satir .no{color:var(--soft); display:inline-block; min-width:22px}
+.sira-satir.ben .no{color:var(--gold)}
+
+/* Canlı göstergesi — yoklamanın çalıştığını belli eder */
+.canli-nokta{font-size:11px; color:var(--soft); display:flex; align-items:center; gap:5px}
+.canli-nokta::before{content:''; width:7px; height:7px; border-radius:50%;
+  background:var(--dogru); animation:nabiz 2s ease-in-out infinite}
+@keyframes nabiz{0%,100%{opacity:1} 50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){ .canli-nokta::before{animation:none} }
 </style>
 </head>
 <body>
@@ -332,7 +356,14 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
     <button class="btn alt" style="margin-top:9px" onclick="sifirla()">Baştan</button>
   </div>
   <div class="card" id="r-siralama-kart" style="display:none">
-    <h3 style="font-size:15px; margin-bottom:10px">İlçende sıralama</h3>
+    <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:4px">
+      <h3 style="font-size:15px; flex:1">Canlı sıralama</h3>
+      <span class="canli-nokta" id="r-canli"></span>
+    </div>
+    <p class="sec" id="r-siram" style="margin:0 0 8px; font-size:12.5px"></p>
+    <div class="siralama-baslik">
+      <span>Takma ad</span><span>İlçe / İl</span><span>Puan</span>
+    </div>
     <div id="r-siralama"></div>
   </div>
   <div class="card">
@@ -614,6 +645,9 @@ function sayacCiz(){
 /* ══════════════ EKRAN GEÇİŞİ ══════════════ */
 function git(ad){
   clearInterval(zamanlayici);
+  // Sonuç ekranından çıkıldığında canlı sıralama yoklaması durmalı, yoksa arka planda
+  // boşuna istek atmaya devam eder.
+  if(ad !== 'sonuc' && typeof siralamaCanliDurdur === 'function') siralamaCanliDurdur();
   document.querySelectorAll('.screen').forEach(e=>e.classList.remove('on'));
   document.getElementById('s-'+ad).classList.add('on');
   window.scrollTo(0,0);
@@ -825,6 +859,62 @@ async function cevapla(secim){
 
 function sonrakiSoru(){ qi++; soruCiz(); }
 
+/* ══════════════ CANLI TÜRKİYE SIRALAMASI ══════════════
+   Diğer yarışmacılar cevapladıkça liste kendiliğinden tazelenir.
+   Supabase Realtime yerine yoklama (polling) kullanılıyor: postgres_changes aboneliği
+   `cevaplar` tablosunu anon'a açmayı gerektirirdi, o tabloda soru_id + dogru_mu birlikte
+   durduğu için doğru cevaplar tersine mühendislikle çıkarılabilirdi (bkz. 06_canli_siralama.sql). */
+let siralamaTik = null;
+const SIRALAMA_ARALIK = 7000;
+
+async function siralamaTazele(){
+  if(!HUTBE || !oturumId) return;
+  const [liste, kendi] = await Promise.all([
+    sb.rpc('turkiye_siralama', { p_hutbe_id: HUTBE.id, p_limit: 50 }),
+    sb.rpc('oturum_sirasi', { p_oturum_id: oturumId }),
+  ]);
+  if(liste.error || !liste.data) return;
+
+  const kart = document.getElementById('r-siralama-kart');
+  kart.style.display = 'block';
+
+  const benimSira = kendi.data && kendi.data.sira;
+  const toplam    = kendi.data && kendi.data.toplam;
+  document.getElementById('r-siram').textContent = benimSira
+    ? `${toplam.toLocaleString('tr-TR')} katılımcı içinde ${benimSira}. sıradasın`
+    : '';
+
+  const listede = liste.data.some(r => r.takma_ad===takmaAd && r.toplam_puan===puan);
+  document.getElementById('r-siralama').innerHTML = liste.data.map(r => `
+    <div class="sira-satir ${r.takma_ad===takmaAd && r.toplam_puan===puan ? 'ben':''}">
+      <span><span class="no">${r.sira}.</span>${r.takma_ad}</span>
+      <span class="yer">${r.ilce_ad} / ${r.il_ad}</span>
+      <span class="puan">${r.toplam_puan.toLocaleString('tr-TR')}</span>
+    </div>`).join('')
+    // İlk 50'ye giremediyse kendi satırı yine de en altta gösterilir
+    + (!listede && benimSira ? `
+    <div class="sira-satir ben" style="border-top:2px solid var(--line); margin-top:4px">
+      <span><span class="no">${benimSira}.</span>${takmaAd}</span>
+      <span class="yer">${ilce} / ${il}</span>
+      <span class="puan">${puan.toLocaleString('tr-TR')}</span>
+    </div>` : '');
+}
+
+function siralamaCanliBaslat(){
+  clearInterval(siralamaTik);
+  siralamaTazele();
+  siralamaTik = setInterval(siralamaTazele, SIRALAMA_ARALIK);
+}
+function siralamaCanliDurdur(){ clearInterval(siralamaTik); siralamaTik = null; }
+
+// Sekme arka plandayken boşuna istek atılmasın
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden){ clearInterval(siralamaTik); }
+  else if(siralamaTik !== null && document.getElementById('s-sonuc').classList.contains('on')){
+    siralamaCanliBaslat();
+  }
+});
+
 /* ══════════════ SONUÇ + SIRALAMA + PAYLAŞILABİLİR KART ══════════════ */
 async function sonucCiz(){
   clearInterval(zamanlayici);
@@ -838,19 +928,15 @@ async function sonucCiz(){
     ? `${dogruSayi}/${SORULAR.length} doğru · <b>${takmaAd}</b> · alıştırma`
     : `${dogruSayi}/${SORULAR.length} doğru · <b>${takmaAd}</b> · ${ilce}`;
 
+  // Paylaşım kartındaki sıra ilçe bazlı kalıyor: "Kadıköy'de 1. sıradasın" paylaşmak için
+  // "Türkiye'de 4.312. sıradasın"dan çok daha güçlü bir kanca (§7 dağıtım).
   let siraMetni = '';
   document.getElementById('r-siralama-kart').style.display = 'none';
   if(!alistirmaMi && oturumId){
-    const { data } = await sb.rpc('ilce_siralama', { p_hutbe_id: HUTBE.id, p_ilce_id: ilceId, p_limit: 20 });
-    if(data && data.length){
-      const benim = data.find(r => r.takma_ad === takmaAd && r.toplam_puan === puan);
-      document.getElementById('r-siralama-kart').style.display = 'block';
-      document.getElementById('r-siralama').innerHTML = data.slice(0,5).map(r => `
-        <div class="siralama-satir ${r.takma_ad===takmaAd && r.toplam_puan===puan ? 'ben':''}">
-          <span>${r.sira}. ${r.takma_ad}</span><span>${r.toplam_puan.toLocaleString('tr-TR')}</span>
-        </div>`).join('');
-      if(benim) siraMetni = `\n📍 ${ilce}'de ${benim.sira}. sıradasın`;
-    }
+    const { data } = await sb.rpc('ilce_siralama', { p_hutbe_id: HUTBE.id, p_ilce_id: ilceId, p_limit: 50 });
+    const benim = data && data.find(r => r.takma_ad === takmaAd && r.toplam_puan === puan);
+    if(benim) siraMetni = `\n📍 ${ilce}'de ${benim.sira}. sıradasın`;
+    siralamaCanliBaslat();
   }
 
   // Wordle modeli: dağıtımın ana kanalı bu kart (quiz_plani.md §7)
