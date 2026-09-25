@@ -136,6 +136,10 @@ details.arsiv[open] summary{color:var(--ink)}
   border-radius:10px; padding:12px 14px; margin-bottom:6px; font-size:15px; cursor:pointer;
   color:var(--ink); font-family:inherit}
 .ilce-sec:active{background:var(--bg)}
+.ilce-sec.cami-sat{padding:8px 12px; margin-bottom:5px; font-size:14.5px}
+.ilce-sec .uz{float:right; font-size:12.5px; color:var(--soft); margin-left:8px}
+.ilce-sec .alt{display:block; font-size:12px; color:var(--soft); margin-top:1px}
+.secili.cami{background:rgba(184,134,58,.1); border-color:var(--gold)}
 .secili{display:flex; align-items:center; gap:7px; background:rgba(45,95,74,.1);
   border:1.5px solid var(--green); border-radius:12px; padding:9px 12px; margin-bottom:8px; font-size:14.5px}
 
@@ -260,6 +264,9 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
     <!-- Konumdan gelen öneriye alternatifler: seçimden sonra da görünür kalmalı,
          bu yüzden konum-alani'nın DIŞINDA duruyor -->
     <div id="konum-alt"></div>
+    <!-- Cami seçimi (isteğe bağlı): ilçe seçilince belirir. Konum varsa en yakın camiler,
+         yoksa ilçe içinde arama. Konum cihazdan çıkmaz; sunucuya yalnızca seçilen cami gider. -->
+    <div id="cami-kutu"></div>
 
     <!-- Geri sayım: ilçe seçilince belirir; cuma dışında sayfanın odak noktası -->
     <div id="sayac-kart" style="display:none">
@@ -353,6 +360,19 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
     <div class="skor" id="r-skor"></div>
     <p class="sec" id="r-ozet" style="margin:2px 0 0"></p>
   </div>
+  <!-- Cami sıralaması: kişinin kendi camisi seçiliyse, Türkiye sıralamasının ÜSTÜNDE —
+       "camimizde kaçıncıyım" Türkiye'deki sıradan daha yakın bir merak -->
+  <div class="card" id="r-cami-kart" style="display:none">
+    <h3 style="font-size:15px; margin-bottom:4px" id="r-cami-baslik"></h3>
+    <p class="sec" id="r-cami-siram" style="margin:0 0 8px; font-size:12.5px"></p>
+    <div id="r-cami-siralama"></div>
+    <h3 style="font-size:14px; margin:16px 0 6px" id="r-ilce-camiler-baslik"></h3>
+    <div class="siralama-baslik">
+      <span>Cami</span><span>Katılımcı</span><span>Ortalama</span>
+    </div>
+    <div id="r-ilce-camiler"></div>
+  </div>
+
   <div class="card" id="r-siralama-kart" style="display:none">
     <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:4px">
       <h3 style="font-size:15px; flex:1">Canlı sıralama</h3>
@@ -456,6 +476,9 @@ let HAFTA = null;                 // hafta_durumu() sonucu: bugünkü hutbe + ge
 let HUTBE = null;                 // oynanan hutbe {id, tarih, baslik}
 let SORULAR = [];                 // canlı: sorular_public (cevapsız) · alıştırma: cevaplı
 let ilceId = null, ilce = '', il = '';
+let camiId = null, camiAd = '';   // isteğe bağlı; seçilmezse yarışma ilçe düzeyinde kalır
+let CAMILER = [], camilerIlce = null;  // seçili ilçenin camileri (istemcide, bir kez çekilir)
+let sonKonum = null;              // {la, lo} — YALNIZCA bellekte; sunucuya hiç gönderilmez
 let oturumId = null, takmaAd = '';
 let qi = 0, puan = 0, sonuclar = [], zamanlayici = null, soruBas = 0;
 let alistirmaMi = false;          // true → sunucuya hiçbir şey yazılmaz, puan istemcide hesaplanır
@@ -522,6 +545,7 @@ function konumDegistir(){
   document.getElementById('konum-alani').style.display = 'block';
   document.getElementById('secili-kutu').innerHTML = '';
   document.getElementById('konum-alt').innerHTML = '';
+  document.getElementById('cami-kutu').innerHTML = '';
   document.getElementById('sayac-kart').style.display = 'none';
   clearInterval(sayacTik);
 }
@@ -539,7 +563,99 @@ function ilceSec(id, ad, ilAdi, kaynak){
   document.getElementById('secili-kutu').innerHTML =
     `<div class="secili">✓ <b>${ad}</b> <span style="color:var(--soft)">/ ${ilAdi}</span>
        <button class="link-btn" style="margin-left:auto; padding:0" onclick="konumDegistir()">değiştir</button></div>`;
+  // Kayıtlı cami yalnızca AYNI ilçedeyse geri gelir
+  camiId = null; camiAd = '';
+  try {
+    const k = JSON.parse(localStorage.getItem('hq_cami') || 'null');
+    if(k && k.ilce === id){ camiId = k.id; camiAd = k.ad; }
+  } catch(e){}
+  // Konumla geldiyse ve kayıtlı cami yoksa yakın camileri hemen göster
+  camiKutuCiz(kaynak === 'konum' && !camiId);
   sayacKur();
+}
+
+/* ══════════════ CAMİ SEÇİMİ (isteğe bağlı) ══════════════
+   ~90 bin cami (Diyanet açık verisi) + OpenStreetMap konumları, bkz. supabase/cami_hazirla.py.
+   Konumun hassasiyeti camiye göre değişir (`konum`: cami / mahalle / ilce) — o yüzden
+   otomatik atama yok: en yakın adaylar gösterilir, kişi kendi camisini seçer. */
+async function camileriYukle(){
+  if(camilerIlce === ilceId) return CAMILER;
+  const { data, error } = await sb.from('camiler')
+    .select('id,ad,mahalle,lat,lng,konum').eq('ilce_id', ilceId).limit(2000);
+  if(error){ console.error(error); return []; }
+  CAMILER = data || []; camilerIlce = ilceId;
+  return CAMILER;
+}
+
+// Merkez ilçelerde tek başına "Merkez" belirsiz — "Çankırı Merkez"
+function ilceEtiket(){ return ilce === 'Merkez' ? `${il} Merkez` : ilce; }
+
+function mesafeYazi(c){
+  if(!sonKonum || c.konum === 'ilce' || c.lat == null) return '';
+  const k = kmUzaklik(sonKonum.la, sonKonum.lo, c.lat, c.lng);
+  const y = k < 1 ? `${Math.round(k * 1000 / 50) * 50} m` : `${k.toLocaleString('tr-TR', {maximumFractionDigits:1})} km`;
+  return c.konum === 'mahalle' ? '~' + y : y;   // mahalle noktası: yaklaşık
+}
+
+function camiSatir(c){
+  return `<button class="ilce-sec cami-sat" onclick="camiSec(${c.id})">
+      <span class="uz">${mesafeYazi(c)}</span><b>${c.ad}</b>
+      ${c.mahalle ? `<span class="alt">${c.mahalle}</span>` : ''}</button>`;
+}
+
+// acik=true → seçim listesi açılır; false → yalnızca özet satırı
+async function camiKutuCiz(acik){
+  const kutu = document.getElementById('cami-kutu');
+  if(!ilceId){ kutu.innerHTML = ''; return; }
+  if(camiId && !acik){
+    kutu.innerHTML = `<div class="secili cami">🕌 <b>${camiAd}</b>
+      <button class="link-btn" style="margin-left:auto; padding:0" onclick="camiKutuCiz(true)">değiştir</button></div>`;
+    return;
+  }
+  if(!acik){
+    kutu.innerHTML = `<div style="text-align:center; margin:-2px 0 6px">
+      <button class="link-btn" onclick="camiKutuCiz(true)">🕌 Camini seç — camindekilerle yarış</button></div>`;
+    return;
+  }
+  kutu.innerHTML = `<p class="sec" style="text-align:center; margin:4px 0">Camiler yükleniyor…</p>`;
+  const liste = await camileriYukle();
+  if(!liste.length){ kutu.innerHTML = `<p class="sec" style="text-align:center">Bu ilçe için cami listesi yok.</p>`; return; }
+
+  let yakinlar = '';
+  if(sonKonum){
+    const sirali = liste.filter(c => c.konum !== 'ilce' && c.lat != null)
+      .map(c => ({ c, k: kmUzaklik(sonKonum.la, sonKonum.lo, c.lat, c.lng) }))
+      .sort((a, b) => a.k - b.k).slice(0, 5).map(x => x.c);
+    if(sirali.length) yakinlar = `<p class="sec" style="margin:6px 2px 6px; font-size:12px">Yakınındaki camiler</p>`
+      + sirali.map(camiSatir).join('');
+  }
+  kutu.innerHTML = `<div style="margin:6px 0 8px">${yakinlar}
+      <input type="text" id="cami-ara" placeholder="${liste.length} cami içinde ara (ad ya da mahalle)"
+             autocomplete="off" oninput="camiAra(this.value)" style="margin-top:6px">
+      <div id="cami-sonuc" style="margin-top:8px"></div>
+      <div style="text-align:center">
+        <button class="link-btn" onclick="camiSec(null)">${camiId ? 'Cami seçimini kaldır' : 'Şimdilik seçmeyeceğim'}</button>
+      </div>
+      <p class="sec" style="text-align:center; font-size:10.5px; margin:2px 0 0; opacity:.75">
+        Cami listesi: Diyanet · konumlar: © OpenStreetMap katkıcıları</p></div>`;
+  if(!sonKonum) document.getElementById('cami-ara').focus();
+}
+
+function camiAra(q){
+  const s = trk(q).trim();
+  const kutu = document.getElementById('cami-sonuc');
+  if(s.length < 2){ kutu.innerHTML = ''; return; }
+  const bulunan = CAMILER.filter(c => trk(c.ad).includes(s) || trk(c.mahalle).includes(s)).slice(0, 8);
+  kutu.innerHTML = bulunan.length ? bulunan.map(camiSatir).join('')
+    : '<p class="sec" style="padding:6px 2px">Sonuç yok</p>';
+}
+
+function camiSec(id){
+  const c = id == null ? null : CAMILER.find(x => x.id === id);
+  camiId = c ? c.id : null; camiAd = c ? c.ad : '';
+  if(c) localStorage.setItem('hq_cami', JSON.stringify({ id: c.id, ad: c.ad, ilce: ilceId }));
+  else localStorage.removeItem('hq_cami');
+  camiKutuCiz(false);
 }
 
 /* Enlem ve boylam farkı DOĞRUDAN karşılaştırılamaz: 40° enlemde 1° boylam ≈ 85 km,
@@ -587,6 +703,7 @@ function konumBul(){
     pos => {
       // Koordinat yalnızca burada, bellekte kullanılır; hiçbir yere yazılmaz.
       const { latitude:la, longitude:lo, accuracy:kesinlik } = pos.coords;
+      sonKonum = { la, lo };   // yakın camileri sıralamak için — yalnızca bellekte
       // Kaba konumda doğru ilçe 4. sıraya bile düşebiliyor; kesinlik zayıfsa aday sayısını artır
       const yakinlar = enYakinIlceler(la, lo, (kesinlik && kesinlik > 3000) ? 5 : 4);
       d.textContent = '';
@@ -753,9 +870,10 @@ async function girisTamam(){
     HUTBE = { id: durum.hutbe_id, tarih: durum.tarih, baslik: durum.baslik };
   }
 
-  const oid = await sb.rpc('oturum_baslat', {
-    p_jeton_hash: jetonHash(), p_ilce_id: ilceId, p_hutbe_id: HUTBE.id, p_takma_ad: takmaAd
-  });
+  const temel = { p_jeton_hash: jetonHash(), p_ilce_id: ilceId, p_hutbe_id: HUTBE.id, p_takma_ad: takmaAd };
+  let oid = await sb.rpc('oturum_baslat', camiId ? { ...temel, p_cami_id: camiId } : temel);
+  // 10_camiler.sql henüz çalıştırılmamışsa p_cami_id'li imza yok — camisiz devam et
+  if(oid.error && camiId) oid = await sb.rpc('oturum_baslat', temel);
   if(oid.error){
     durumEl.textContent = 'Oturum başlatılamadı — az sonra tekrar dene.';
     btn.disabled=false; btn.textContent='Başla'; return;
@@ -887,8 +1005,38 @@ function sonrakiSoru(){ qi++; soruCiz(); }
 let siralamaTik = null;
 const SIRALAMA_ARALIK = 7000;
 
+async function camiSiralamaTazele(){
+  const kart = document.getElementById('r-cami-kart');
+  if(!HUTBE || !oturumId || !camiId){ kart.style.display = 'none'; return null; }
+  const [ic, ilceCami] = await Promise.all([
+    sb.rpc('cami_siralama', { p_hutbe_id: HUTBE.id, p_cami_id: camiId, p_limit: 50 }),
+    sb.rpc('ilce_cami_siralama', { p_hutbe_id: HUTBE.id, p_ilce_id: ilceId, p_limit: 30 }),
+  ]);
+  if(ic.error || !ic.data){ kart.style.display = 'none'; return null; }
+  kart.style.display = 'block';
+  document.getElementById('r-cami-baslik').textContent = '🕌 ' + camiAd;
+  const benim = ic.data.find(r => r.takma_ad === takmaAd && r.toplam_puan === puan);
+  document.getElementById('r-cami-siram').textContent = benim
+    ? `Caminde ${ic.data.length} kişi içinde ${benim.sira}. sıradasın` : '';
+  document.getElementById('r-cami-siralama').innerHTML = ic.data.slice(0, 10).map(r => `
+    <div class="sira-satir ${benim && r === benim ? 'ben' : ''}" style="grid-template-columns:1fr 62px">
+      <span><span class="no">${r.sira}.</span>${r.takma_ad}</span>
+      <span class="puan">${r.toplam_puan.toLocaleString('tr-TR')}</span>
+    </div>`).join('');
+  const liste = (ilceCami.data || []);
+  document.getElementById('r-ilce-camiler-baslik').textContent = `${ilceEtiket()} camileri`;
+  document.getElementById('r-ilce-camiler').innerHTML = liste.length ? liste.slice(0, 10).map(r => `
+    <div class="sira-satir ${r.cami_id === camiId ? 'ben' : ''}">
+      <span><span class="no">${r.sira}.</span>${r.cami_ad}</span>
+      <span class="yer">${r.katilimci} kişi</span>
+      <span class="puan">${r.ortalama_puan.toLocaleString('tr-TR')}</span>
+    </div>`).join('') : '<p class="sec" style="padding:6px 0">Henüz başka cami yok.</p>';
+  return benim ? benim.sira : null;
+}
+
 async function siralamaTazele(){
   if(!HUTBE || !oturumId) return;
+  camiSiralamaTazele();
   const [liste, kendi] = await Promise.all([
     sb.rpc('turkiye_siralama', { p_hutbe_id: HUTBE.id, p_limit: 50 }),
     sb.rpc('oturum_sirasi', { p_oturum_id: oturumId }),
@@ -952,10 +1100,15 @@ async function sonucCiz(){
   // "Türkiye'de 4.312. sıradasın"dan çok daha güçlü bir kanca (§7 dağıtım).
   let siraMetni = '';
   document.getElementById('r-siralama-kart').style.display = 'none';
+  document.getElementById('r-cami-kart').style.display = 'none';
   if(!alistirmaMi && oturumId){
-    const { data } = await sb.rpc('ilce_siralama', { p_hutbe_id: HUTBE.id, p_ilce_id: ilceId, p_limit: 50 });
+    const [{ data }, camiSira] = await Promise.all([
+      sb.rpc('ilce_siralama', { p_hutbe_id: HUTBE.id, p_ilce_id: ilceId, p_limit: 50 }),
+      camiSiralamaTazele(),
+    ]);
     const benim = data && data.find(r => r.takma_ad === takmaAd && r.toplam_puan === puan);
-    if(benim) siraMetni = `\n📍 ${ilce}'de ${benim.sira}. sıradasın`;
+    if(camiSira) siraMetni += `\n🕌 ${camiAd}'nde ${camiSira}. sıradasın`;
+    if(benim) siraMetni += `\n📍 ${ilceEtiket()}'de ${benim.sira}. sıradasın`;
     siralamaCanliBaslat();
   }
 
@@ -971,7 +1124,7 @@ ${kutular}  ${dogruSayi}/${SORULAR.length}
 — ${soz.k}
 📖 ${soz.h} hutbesi · ${soz.t}
 
-${takmaAd}${alistirmaMi ? '' : ' · ' + ilce}
+${takmaAd}${alistirmaMi ? '' : ' · ' + ilceEtiket()}
 ${SITE}`;
 
   document.getElementById('r-detay').innerHTML = SORULAR.map((q,i)=>`
