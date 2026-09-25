@@ -694,13 +694,17 @@ function konumAlternatifleri(yakinlar, kesinlikM){
     `</p>`;
 }
 
+/* İki aşamalı: önce GPS (yakın camileri doğru sıralamak için), zaman aşımına uğrar ya da
+   konum bulunamazsa Wi-Fi/baz istasyonu konumuyla ikinci deneme. Kapalı alanda ve
+   bilgisayarda GPS yok; tek aşamalı sürüm 10 sn sonra "Konum alınamadı" deyip vazgeçiyordu.
+   İlçe ve mahalle düzeyi için kaba konum yeterli. */
 function konumBul(){
   const d = document.getElementById('konum-durum');
-  if(!navigator.geolocation){ d.textContent = 'Bu cihaz konum desteklemiyor.'; return; }
+  if(!navigator.geolocation){ d.textContent = 'Bu tarayıcı konum desteklemiyor — aşağıdan arayabilirsin.'; return; }
   if(!ILCELER.length){ d.textContent = 'İlçe listesi henüz yüklenmedi, biraz bekleyip tekrar dene.'; return; }
+  if(!window.isSecureContext){ d.textContent = 'Konum yalnızca https:// adresinde çalışır.'; return; }
   d.textContent = 'Konum alınıyor…';
-  navigator.geolocation.getCurrentPosition(
-    pos => {
+  const basarili = pos => {
       // Koordinat yalnızca burada, bellekte kullanılır; hiçbir yere yazılmaz.
       const { latitude:la, longitude:lo, accuracy:kesinlik } = pos.coords;
       sonKonum = { la, lo };   // yakın camileri sıralamak için — yalnızca bellekte
@@ -710,11 +714,31 @@ function konumBul(){
       if(!yakinlar.length){ d.textContent = 'Yakın ilçe bulunamadı — aşağıdan arayabilirsin.'; return; }
       ilceSec(yakinlar[0].id, yakinlar[0].ad, yakinlar[0].il, 'konum');
       konumAlternatifleri(yakinlar, kesinlik);
-    },
+  };
+  const izinYok = () => {
+    // Bir kez "engelle" denince tarayıcı bir daha SORMAZ — nasıl açılacağını söylemek gerekiyor.
+    // Uygulama içi tarayıcılar (WhatsApp, Instagram…) konumu çoğu zaman hiç vermiyor.
+    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const uygulamaIci = /FBAN|FBAV|Instagram|WhatsApp|Line\/|Twitter|TikTok/i.test(navigator.userAgent);
+    d.innerHTML = uygulamaIci
+      ? 'Bu uygulamanın içindeki tarayıcı konum vermiyor. Sağ üstteki menüden <b>tarayıcıda aç</b>, ya da aşağıdan ara.'
+      : iOS
+        ? 'Konum izni kapalı. <b>Ayarlar → Gizlilik → Konum Servisleri → Safari Web Siteleri</b>\'nden aç, ya da aşağıdan ara.'
+        : 'Konum izni kapalı. Adres çubuğundaki <b>kilit/ayar simgesi → Konum → İzin ver</b> ile açıp tekrar dene, ya da aşağıdan ara.';
+  };
+  navigator.geolocation.getCurrentPosition(
+    basarili,
     err => {
-      d.textContent = err.code===1
-        ? 'Konum izni verilmedi — aşağıdan arayabilirsin.'
-        : 'Konum alınamadı — aşağıdan arayabilirsin.';
+      if(err.code === 1){ izinYok(); return; }
+      d.textContent = 'Konum aranıyor (GPS yavaş, ağ konumu deneniyor)…';
+      navigator.geolocation.getCurrentPosition(
+        basarili,
+        err2 => {
+          if(err2.code === 1){ izinYok(); return; }
+          d.textContent = 'Konum alınamadı (cihazın konum servisi kapalı olabilir) — aşağıdan arayabilirsin.';
+        },
+        {enableHighAccuracy:false, timeout:15000, maximumAge:600000}
+      );
     },
     {enableHighAccuracy:true, timeout:10000, maximumAge:60000}
   );
