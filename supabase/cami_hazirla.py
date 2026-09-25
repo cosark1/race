@@ -317,7 +317,15 @@ def yukle():
          "Prefer": "resolution=merge-duplicates,return=minimal"}
     veri = json.load(open(CIKTI, encoding="utf-8"))
     for i in range(0, len(veri), 1000):
-        s._get(f"{url}/rest/v1/camiler?on_conflict=id", H, json.dumps(veri[i:i + 1000]).encode(), "POST")
+        for deneme in range(5):   # geçici SSL/ağ kopmaları (upsert olduğu için tekrar güvenli)
+            try:
+                s._get(f"{url}/rest/v1/camiler?on_conflict=id", H, json.dumps(veri[i:i + 1000]).encode(), "POST")
+                break
+            except (urllib.error.URLError, TimeoutError) as e:
+                if deneme == 4:
+                    raise
+                print(f"    parti {i}: {e} — tekrar")
+                time.sleep(5 * (deneme + 1))
         print(f"  {min(i + 1000, len(veri))}/{len(veri)}")
     print("Supabase'e yazıldı.")
 
