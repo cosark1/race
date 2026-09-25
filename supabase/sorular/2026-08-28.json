@@ -1,0 +1,67 @@
+{
+  "tarih": "2026-08-28",
+  "baslik": "Vatan Sevgisi",
+  "korpus_hutbe_id": "28.08.2026",
+  "sorular": [
+    {
+      "sira": 1,
+      "metin": "Hutbeye göre İstanbul’un fethiyle ne olmuştur?",
+      "secenekler": [
+        "Anadolu bize yurt olmuştur",
+        "Anadolu’daki hâkimiyetimiz perçinlenmiştir",
+        "Düşmanlara geçit verilmeyeceği ilan edilmiştir",
+        "Bir çağ kapanıp yeni bir çağ açılmıştır"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“Aziz vatanımız; Malazgirt Destanıyla bizlere yurt olmuş, İstanbul’un fethiyle Anadolu’daki hâkimiyetimiz perçinlenmiş, Büyük Taarruz’la da düşmanlara geçit verilmeyeceği tüm dünyaya ilan edilmiştir.”"
+    },
+    {
+      "sira": 2,
+      "metin": "Hutbede vatan sevgisi anlatılırken ezanlarımız neyin nişanesi olarak anılmıştır?",
+      "secenekler": [
+        "İstiklalimizin",
+        "İmanımızın",
+        "Birliğimizin",
+        "Kardeşliğimizin"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "“Vatan sevgisinden maksat ise; istiklalimizin sembolü bayrağımıza, kardeşliğimizin nişanesi ezanlarımıza, bizi millet kılan mukaddes değerlerimize sahip çıkmaktır.”"
+    },
+    {
+      "sira": 3,
+      "metin": "Hutbeye göre vatanı sevmek, nebevi emre gönülden bağlanmanın yanında neyi de gerektirir?",
+      "secenekler": [
+        "İşimizi en doğru ve en güzel şekilde yapmayı",
+        "Askerlik görevini eksiksiz yerine getirmeyi",
+        "Yerli malı kullanmayı alışkanlık hâline getirmeyi",
+        "Tarihimizi çocuklarımıza anlatmayı"
+      ],
+      "dogru_idx": 0,
+      "aciklama": "“Vatanı sevmek, işimizi en doğru ve en güzel şekilde yapmak; dürüstlüğün ve adaletin hâkim olduğu bir toplum inşa etmektir.”"
+    },
+    {
+      "sira": 4,
+      "metin": "Hutbede aktarılan “Gevşeklik göstermeyin, üzülmeyin; eğer inanmışsanız…” ayeti nasıl devam etmektedir?",
+      "secenekler": [
+        "…Allah sizinle beraberdir",
+        "…şüphesiz en üstün olan sizsiniz",
+        "…zafer sizindir",
+        "…Allah sizi yalnız bırakmaz"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“Gevşeklik göstermeyin, üzülmeyin; eğer inanmışsanız şüphesiz en üstün olan sizsiniz.” (Âl-i İmrân, 3/139)"
+    },
+    {
+      "sira": 5,
+      "metin": "Hutbenin bitirildiği Âl-i İmrân sûresi 200. ayete göre, başarıya erişebilmek için sabretmek, sebat göstermek ve hazırlıklı ve uyanık olmanın yanında ne gerekir?",
+      "secenekler": [
+        "Allah’a tevekkül etmek",
+        "Birlik olmak",
+        "Allah’tan korkmak",
+        "Namazı dosdoğru kılmak"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“Ey iman edenler! Sabredin; düşman karşısında sebat gösterin; cihad için hazırlıklı ve uyanık olun ve Allah’tan korkun ki başarıya erişebilesiniz.” (Âl-i İmrân, 3/200)"
+    }
+  ]
+}

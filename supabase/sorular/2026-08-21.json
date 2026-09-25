@@ -1,0 +1,67 @@
+{
+  "tarih": "2026-08-21",
+  "baslik": "Mevlid-i Nebi",
+  "korpus_hutbe_id": "21.08.2026",
+  "sorular": [
+    {
+      "sira": 1,
+      "metin": "Hutbede Hz. Hatice annemizin, Peygamberimiz (s.a.s)’in hasletlerini anlatırken saydıkları arasında hangisi yoktur?",
+      "secenekler": [
+        "Akrabayı gözetirsin",
+        "Misafire ikram edersin",
+        "Borçlunun borcunu üstlenirsin",
+        "Musibete uğrayanlara yardım edersin"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“…Çünkü sen akrabayı gözetirsin; muhtaç olanların bakımını üstlenirsin; aç ve açıkta olanı koruyup, kollarsın; misafire ikram edersin ve musibete maruz kalanlara yardım edersin.” (Buhârî, Bed’ü’l-vahy, 1) Borçlunun borcu sayılmıyor."
+    },
+    {
+      "sira": 2,
+      "metin": "Hutbeye göre helal kazanç arayan kimse, hangi nebevi prensibi hayatında ilke edinmelidir?",
+      "secenekler": [
+        "“Sizin en hayırlınız, ailesine karşı en iyi olanınızdır”",
+        "“Allah kişinin, işini sağlam yapmasından hoşlanır”",
+        "“Müslüman, dilinden ve elinden insanların selâmette olduğu kişidir”",
+        "“Müminlerin iman bakımından en mükemmeli, ahlâk bakımından en güzel olanıdır”"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“Kim, helal kazanç arıyorsa; ‘Allah kişinin, işini sağlam yapmasından hoşlanır’ prensibini hayatında ilke edinsin.” (Taberânî, el-Mu’cemü’l-kebîr) Diğer üçü hutbede aile huzuru, sosyal hayat ve imanın tadı için önerildi."
+    },
+    {
+      "sira": 3,
+      "metin": "Hutbeye göre dünyanın diğer ucundakilerle iletişim kurabilen nice insanımız, kimlere yabancı olabilmektedir?",
+      "secenekler": [
+        "Aynı işyerini paylaştığı mesai arkadaşlarına",
+        "Aynı camide saf tuttuğu cemaate",
+        "Aynı sınıfı paylaştığı arkadaşlarına",
+        "Aynı evi paylaştığı eşine, çocuklarına, anne ve babasına"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "“Dünyanın diğer ucundakilerle iletişim kurabilen nice insanımız; aynı evi paylaştığı eşine, çocuklarına, anne ve babasına yabancı olabilmektedir.”"
+    },
+    {
+      "sira": 4,
+      "metin": "Hutbeye göre bu yılki Mevlid-i Nebi Haftası’nı özel kılan nedir?",
+      "secenekler": [
+        "Peygamberimizin doğumunun hicri 1500. yılı olması",
+        "Peygamberimizin doğumunun miladi 1450. yılı olması",
+        "Hicretin 1450. yılı olması",
+        "İlk vahyin 1500. yılı olması"
+      ],
+      "dogru_idx": 0,
+      "aciklama": "“Sevgili Peygamberimiz (s.a.s)’in doğumunun hicri bin beş yüzüncü yılı olması münasebetiyle Mevlid-i Nebi Haftasını ‘Peygamberimiz ve Güzel Ahlak’ temasıyla idrak edeceğiz.”"
+    },
+    {
+      "sira": 5,
+      "metin": "Hutbenin bitirildiği Ahzâb sûresi 45-46. ayetlere göre Peygamberimiz; şahit, müjdeleyici, uyarıcı ve Allah’ın yoluna çağıran bir davetçi olmanın yanında ne olarak gönderilmiştir?",
+      "secenekler": [
+        "Âlemlere bir rahmet olarak",
+        "Yol gösterici bir rehber olarak",
+        "Aydınlatıcı bir kandil olarak",
+        "Parlayan bir yıldız olarak"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“Ey Peygamber! Biz seni bir şahit, bir müjdeleyici, bir uyarıcı; Allah’ın izniyle kendi yoluna çağıran bir davetçi ve aydınlatıcı bir kandil olarak gönderdik.” (Ahzâb, 33/45-46)"
+    }
+  ]
+}

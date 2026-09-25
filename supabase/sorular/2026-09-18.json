@@ -1,0 +1,67 @@
+{
+  "tarih": "2026-09-18",
+  "baslik": "Ahîlik Ahlakı",
+  "korpus_hutbe_id": "18.09.2026",
+  "sorular": [
+    {
+      "sira": 1,
+      "metin": "Hutbeye göre Ahîlik teşkilatı kimler arasında kardeşlik köprüsü kurmuştur?",
+      "secenekler": [
+        "Usta ile çırak",
+        "Zengin ile fakir",
+        "Şehirli ile köylü",
+        "Esnaf ile müşteri"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "“Bu teşkilat ile ticaret, zanaat ve ustalığı; ahlak, kanaat ve hayırlı insan yetiştirme anlayışıyla bir araya getirmiş, esnaf ve müşteri arasında kardeşlik köprüsü kurmuştur.”"
+    },
+    {
+      "sira": 2,
+      "metin": "Hutbeye göre Ahîliğin kurduğu bu kardeşlik köprüsü neye zemin hazırlamıştır?",
+      "secenekler": [
+        "Nice beldenin kılıçsız fethedilmesine",
+        "Loncaların kurulmasına",
+        "Anadolu’nun yurt edinilmesine",
+        "Vakıf medeniyetinin doğmasına"
+      ],
+      "dogru_idx": 0,
+      "aciklama": "“…kurduğu bu kardeşlik köprüsü öyle bir hal almıştır ki; nice insanın İslam’la şereflenmesine ve nice beldenin kılıçsız fethedilmesine zemin hazırlamıştır.”"
+    },
+    {
+      "sira": 3,
+      "metin": "Hutbeye göre kimi insanımız, dünyalık kazanç uğruna gerçeği çarpıtmayı ne olarak sayabiliyor?",
+      "secenekler": [
+        "Ticari zekâ",
+        "Rekabet gereği",
+        "Pazarlama tekniği",
+        "Piyasa kuralı"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“…dünyalık kazanç uğruna malının kusurunu gizlemeyi ustalık, gerçeği çarpıtmayı ise pazarlama tekniği sayabiliyor.”"
+    },
+    {
+      "sira": 4,
+      "metin": "Hutbede esnaftan uzak durması beklenen gayr-ı meşru yollar arasında hangisi sayılmamıştır?",
+      "secenekler": [
+        "Rüşvet",
+        "Karaborsacılık",
+        "Stokçuluk",
+        "Fahiş fiyatla satış"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "“Bizlerden beklenen, dinimizce haram görülen şeylerin ticaretini yapmaktan; rüşvet, faiz, karaborsacılık ve stokçuluk gibi gayr-ı meşru yollardan uzak durmaktır.”"
+    },
+    {
+      "sira": 5,
+      "metin": "Hutbenin bitirildiği duaya göre Allah, satarken, satın alırken ve alacağını talep ederken nasıl davranan kimseye rahmetiyle muamele etsin?",
+      "secenekler": [
+        "Dürüst davranıp doğruyu söyleyen",
+        "Hoşgörülü davranıp kolaylık gösteren",
+        "Ölçüyü tam tutup hakkı gözeten",
+        "Sözünde durup emaneti koruyan"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“Satarken, satın alırken, alacağını talep ederken hoşgörülü davranıp kolaylık gösteren kimseye Allah rahmetiyle muamele eylesin.” (Buhârî, Büyû’, 16)"
+    }
+  ]
+}

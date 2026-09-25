@@ -83,7 +83,8 @@ def main():
     if not SUPABASE_URL or not SERVICE_KEY:
         sys.exit("SUPABASE_URL ve SUPABASE_SERVICE_ROLE_KEY ortam değişkenleri gerekli.")
 
-    hedef = gelecek_cuma()
+    # İsteğe bağlı: python vakit_guncelle.py 2026-09-25 — belirli bir günü (örn. kaçırılmış bugünü) doldurur
+    hedef = date.fromisoformat(sys.argv[1]) if len(sys.argv) > 1 else gelecek_cuma()
     print(f"Hedef tarih: {hedef.isoformat()} (Cuma)")
 
     ilceler = supabase_get("ilceler?select=id,diyanet_ilce_kodu")

@@ -1,0 +1,67 @@
+{
+  "tarih": "2026-09-04",
+  "baslik": "Peygamberimiz ve Güzel Ahlak",
+  "korpus_hutbe_id": "04.09.2026",
+  "sorular": [
+    {
+      "sira": 1,
+      "metin": "Hutbenin başında, Peygamberimiz (s.a.s)’in “kardeşlerim” diye müjdelediği kimselerden olmanın mutluluğu dile getirilmektedir. Hutbede anılan bu müjde hangisidir?",
+      "secenekler": [
+        "“Ne mutlu gariplere”",
+        "“Ne mutlu sünnetimi yaşatanlara”",
+        "“Ne mutlu beni görmeden iman edenlere”",
+        "“Ne mutlu bana salavat getirenlere”"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“…‘Ne mutlu beni görmeden iman edenlere’ diyerek müjdelediğin kardeşlerin olmanın huzur ve mutluluğunu yaşıyoruz.” (İbn Hanbel, III, 155)"
+    },
+    {
+      "sira": 2,
+      "metin": "Hutbede aktarılan hadise göre “Her dinin kendine özgü bir ahlakı vardır; İslam ahlakının özü …dır.” Boşluğa ne gelir?",
+      "secenekler": [
+        "Hayâ",
+        "Doğruluk",
+        "Merhamet",
+        "Adalet"
+      ],
+      "dogru_idx": 0,
+      "aciklama": "“Her dinin kendine özgü bir ahlakı vardır; İslam ahlakının özü hayâdır.” (İbn Mâce, Zühd, 17)"
+    },
+    {
+      "sira": 3,
+      "metin": "Hutbeye göre Peygamberimiz (s.a.s), toplumsal huzur ve barışı sağlamanın yöntemini hangi sözüyle öğretmiştir?",
+      "secenekler": [
+        "“İman etmedikçe cennete giremezsiniz. Birbirinizi sevmedikçe de gerçek manada iman etmiş olmazsınız”",
+        "“Doğruluktan ayrılmayın. Çünkü doğruluk iyiliğe, iyilik de cennete götürür…”",
+        "“Allah sizin suretlerinize ve mallarınıza bakmaz, ancak kalplerinize ve amellerinize bakar”",
+        "“Birbirinizden nefret etmeyin, birbirinize haset etmeyin, birbirinize sırt çevirmeyin. Ey Allah’ın kulları, kardeş olun”"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "“Toplumsal huzur ve barışı sağlamanın yöntemini ise, ‘Birbirinizden nefret etmeyin… Ey Allah’ın kulları, kardeş olun’ uyarısıyla bizlere öğretmiştir.” (Buhârî, Edeb, 62) “İman etmedikçe…” sözü hutbede iman ile ahlakın ayrılmazlığı için anıldı."
+    },
+    {
+      "sira": 4,
+      "metin": "Hutbeye göre Peygamberimiz (s.a.s), komşumuz açken ne yapmaktan bizleri nehyetmektedir?",
+      "secenekler": [
+        "Sofrada israf etmekten",
+        "Tok olarak uyumaktan",
+        "Yemeğimizin kokusuyla onu incitmekten",
+        "Kapımızı ona kapatmaktan"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“…komşumuz açken tok olarak uyumaktan bizleri nehyetmektedir.” (İbn Ebû Şeybe, Musannef, Îmân ve rü’yâ, 6)"
+    },
+    {
+      "sira": 5,
+      "metin": "Hutbede bugün hepimizi derinden etkileyen anlayış tarif edilirken hangisi sayılmamıştır?",
+      "secenekler": [
+        "Maddeyi önceleyip manayı öteleyen",
+        "Görünür olmayı yegâne hedef hâline getiren",
+        "Hızı derinliğe tercih eden",
+        "Yalanı hakikate tercih eden"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“Bugün; maddeyi önceleyip manayı öteleyen, görünür olmayı yegâne hedef hâline getiren, fâni olanı bâkiye, yalanı hakikate tercih eden anlayış, hepimizi derinden etkilemektedir.” Hız ve derinlik geçmiyor."
+    }
+  ]
+}

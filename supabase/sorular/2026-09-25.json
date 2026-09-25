@@ -1,0 +1,67 @@
+{
+  "tarih": "2026-09-25",
+  "baslik": "Tebliğ Sorumluluğumuz",
+  "korpus_hutbe_id": "25.09.2026",
+  "sorular": [
+    {
+      "sira": 1,
+      "metin": "Hutbeye göre Mus‘ab b. Umeyr’in Medine’deki tebliğinin sonucunda bir yıl içinde ne olmuştur?",
+      "secenekler": [
+        "Medinelilerin tamamı Müslüman olmuştur",
+        "Medine’de ilk mescit inşa edilmiştir",
+        "Medine’de Efendimiz’den bahsedilmeyen hiçbir ev kalmamıştır",
+        "Medine’deki kabileler arasındaki savaşlar sona ermiştir"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“Öyle ki, bir yıl içerisinde Medine’de Efendimiz (s.a.s)’den bahsedilmeyen hiçbir ev kalmadı.” (İbn Hişâm, Sîret, II, 278)"
+    },
+    {
+      "sira": 2,
+      "metin": "Hutbeye göre genç Mus‘ab’ı kısa bir sürede bu denli başarılı kılan neydi?",
+      "secenekler": [
+        "Peygamberimizin güzel ahlakını kendisine rehber edinmesi",
+        "Kur’an’ı ezbere bilmesi",
+        "Etkili bir hitabete sahip olması",
+        "Medine’nin ileri gelenlerini ikna etmesi"
+      ],
+      "dogru_idx": 0,
+      "aciklama": "“Genç Mus‘ab’ı kısa bir sürede bu denli başarılı kılan, Resûl-i Ekrem (s.a.s)’in güzel ahlakını kendisine rehber edinmesiydi.”"
+    },
+    {
+      "sira": 3,
+      "metin": "Hutbede “nebevî daveti kuşanmış” olarak sayılanlar arasında hangisi yoktur?",
+      "secenekler": [
+        "Müşterisine güven veren her esnaf",
+        "Öğrencilerinin hayatında olumlu izler bırakan her öğretmen",
+        "Komşusuyla iyi geçinen her insan",
+        "Hastasına şefkat gösteren her doktor"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "“…çocuğunun iki cihan saadeti için koşuşturan her anne ve baba, öğrencilerinin hayatında olumlu izler bırakmak için gayret gösteren her öğretmen, müşterisine güven veren her esnaf, akrabalık bağlarını gözeten ve komşusuyla iyi geçinen her insan nebevî daveti kuşanmış demektir.” Doktor sayılmıyor."
+    },
+    {
+      "sira": 4,
+      "metin": "Hutbeye göre sosyal mecralarda bir başkasının hayatına dair yorum yapmadan önce neye özen gösterilmelidir?",
+      "secenekler": [
+        "Doğruluğuna",
+        "Mahremiyetine",
+        "Kaynağına",
+        "Üslubuna"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“Bir sözü paylaşmadan önce doğruluğuna, bir başkasının hayatına dair yorum yapmadan önce ise mahremiyetine özen göstermelidir.”"
+    },
+    {
+      "sira": 5,
+      "metin": "Hutbenin bitirildiği hadis-i şerife göre “Allah, bizden bir söz işitip, onu işittiği gibi başkasına ulaştıran kişinin …” Nasıl devam eder?",
+      "secenekler": [
+        "…ilmini artırsın",
+        "…derecesini yükseltsin",
+        "…yüzünü ak etsin",
+        "…günahlarını bağışlasın"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“Allah, bizden bir söz işitip, onu işittiği gibi başkasına ulaştıran kişinin yüzünü ak etsin.” (Dârimî, Mukaddime, 24)"
+    }
+  ]
+}

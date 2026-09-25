@@ -1,0 +1,67 @@
+{
+  "tarih": "2026-09-11",
+  "baslik": "Eğitim ve Öğretim",
+  "korpus_hutbe_id": "11.09.2026",
+  "sorular": [
+    {
+      "sira": 1,
+      "metin": "Hutbeye göre eğitimin temeli hangi anlayış olmalıdır?",
+      "secenekler": [
+        "Başarılı bir meslek sahibi yetiştirme anlayışı",
+        "Rekabet gücü yüksek bireyler yetiştirme anlayışı",
+        "Milli ve manevi değerlerine bağlı iyi bir insan yetiştirme anlayışı",
+        "Güçlü liderler yetiştirme anlayışı"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“Yaratana kulluk etmeyi ve yaratılana merhamet göstermeyi kendisine düstur edinen, milli ve manevi değerlerine bağlı iyi bir insan yetiştirme anlayışı, eğitimin temeli olmalıdır.”"
+    },
+    {
+      "sira": 2,
+      "metin": "Hutbede “eğitimden maksat” olarak sayılanlar arasında hangisi yoktur?",
+      "secenekler": [
+        "Bütün insanlık için umut olan bir nesil yetiştirmek",
+        "Güzel ahlakı temsil eden bir toplum inşa etmek",
+        "Ülkemizin bilimde ve teknolojide söz sahibi olmasına katkı sunmak",
+        "Gençlerin iyi bir meslek sahibi olmasını sağlamak"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "Hutbe üç kez “Eğitimden maksat…” diyor: umut olan bir nesil yetiştirmek, güzel ahlakı temsil eden bir toplum inşa etmek, ülkemizin bilimde, teknolojide, sanatta söz sahibi olmasına katkı sunmak. Meslek sahibi olmak sayılmıyor."
+    },
+    {
+      "sira": 3,
+      "metin": "Hutbeye göre iyi bir eğitim için öncelikle ne yapmak zorundayız?",
+      "secenekler": [
+        "Evlatlarımızı iyi tanımak",
+        "Onlara iyi bir örnek olmak",
+        "Okullarımızı iyi donatmak",
+        "Öğretmenlerimize destek olmak"
+      ],
+      "dogru_idx": 0,
+      "aciklama": "“Bu bakımdan, iyi bir eğitim için, öncelikle evlatlarımızı iyi tanımak zorundayız.”"
+    },
+    {
+      "sira": 4,
+      "metin": "Hutbeye göre ebedi bir âlemin varlığına inananlar için asıl başarı nedir?",
+      "secenekler": [
+        "Dünyada hayırlı bir iz bırakmak",
+        "Rızâ-yı ilahiye ulaşmak",
+        "İlimde derinleşmek",
+        "Hayırlı bir evlat yetiştirmek"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“Unutmayalım ki, ebedi bir âlemin varlığına inananlar için asıl başarı, rızâ-yı ilahiye ulaşmaktır.”"
+    },
+    {
+      "sira": 5,
+      "metin": "Hutbenin bitirildiği hadis-i şerife göre “Kim ilim için yola çıkarsa, Allah ona …” Nasıl devam eder?",
+      "secenekler": [
+        "…hayır kapılarını açar",
+        "…hikmet kapılarını açar",
+        "…dünya ve ahiret saadeti verir",
+        "…cennete giden yolu kolaylaştırır"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "“Kim ilim için yola çıkarsa, Allah ona cennete giden yolu kolaylaştırır...” (Tirmizî, İlim, 19)"
+    }
+  ]
+}
