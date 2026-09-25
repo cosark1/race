@@ -30,6 +30,7 @@ self.addEventListener('fetch', e => {
 
   // Supabase (ve her türlü çapraz-origin) isteği asla önbelleklenmez — canlı veri.
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/sb/')) return;   // Supabase aracı (worker.js) — canlı veri
   if (e.request.method !== 'GET') return;
 
   e.respondWith(

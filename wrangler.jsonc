@@ -1,0 +1,9 @@
+// Cloudflare Workers dağıtımı (GitHub'a push → otomatik). Ad, panodaki Worker'la aynı olmalı.
+{
+  "name": "kahutbe",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-01",
+  // Önce statik dosya aranır; bulunamazsa (ör. /sb/…) worker.js çalışır.
+  // Yayına ÇIKMAYACAK dosyalar: .assetsignore (soru/cevap dosyaları, SQL, betikler).
+  "assets": { "directory": ".", "binding": "ASSETS" }
+}

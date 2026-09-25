@@ -1,0 +1,10 @@
+# Cloudflare'e statik dosya olarak YÜKLENMEYECEKLER.
+# supabase/ içinde soru dosyaları DOĞRU CEVAPLARLA duruyor (sorular/*.json, NN_*.sql) —
+# yayında olursa canlı quiz'in cevapları kahutbe.com'dan indirilebilir (25.09.2026'da oldu).
+supabase/
+.git/
+.gitignore
+serve.py
+desktop.ini
+worker.js
+wrangler.jsonc
