@@ -412,13 +412,19 @@ pre.paylas{background:var(--bg); border:1px dashed var(--line); border-radius:12
 </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- supabase-js 2.117.1 kendi sitemizden: bazı ağlarda cdn.jsdelivr.net açılmayınca tüm sayfa
+     kodu duruyordu (ne ilçe listesi ne konum). Güncellemek için vendor/supabase.js değiştirilir. -->
+<script src="vendor/supabase.js"></script>
 <script src="config.js"></script>
 <script>
 /* ══════════════ KURULUM / BAĞLANTI ══════════════ */
 const yapilandirmaEksik = !window.HQ_CONFIG || /SENIN-/.test(HQ_CONFIG.url) || /SENIN-/.test(HQ_CONFIG.anonKey);
 document.getElementById(yapilandirmaEksik ? 's-kurulum-eksik' : 'app').style.display = 'block';
-const sb = yapilandirmaEksik ? null : window.supabase.createClient(HQ_CONFIG.url, HQ_CONFIG.anonKey);
+// Kütüphane yüklenemezse (ağ sorunu) createClient hata fırlatıp TÜM sayfa kodunu durduruyordu —
+// kullanıcı sessizce çalışmayan bir sayfa görüyordu. Artık sb=null olur ve hata ekrana yazılır.
+let sb = null;
+try { if(!yapilandirmaEksik) sb = window.supabase.createClient(HQ_CONFIG.url, HQ_CONFIG.anonKey); }
+catch(e){ console.error(e); }
 
 const TEST_MODE = new URLSearchParams(location.search).has('test');
 if (TEST_MODE) document.getElementById('demo-bar').style.display = 'flex';
@@ -512,9 +518,24 @@ function haftaninSozu(){
    KVKK: koordinat SAKLANMAZ, yalnızca en yakın ilçeye çevrilip atılır (§5, §8). */
 function trk(s){ return (s||'').replace(/İ/g,'i').replace(/I/g,'ı').toLocaleLowerCase('tr'); }
 
+// Sunucuya ulaşılamadığında konum/arama alanının altında görünür uyarı + tekrar dene
+function baglantiHatasi(nerede){
+  const d = document.getElementById('konum-durum');
+  d.innerHTML = `Sunucuya ulaşılamadı (${nerede}). İnternet bağlantını kontrol et — mobil veride
+    sorun sürerse Wi-Fi'yi dene. <button class="link-btn" onclick="yenidenBaglan()">Tekrar dene</button>`;
+}
+function yenidenBaglan(){
+  document.getElementById('konum-durum').textContent = 'Bağlanılıyor…';
+  if(!sb){ location.reload(); return; }
+  girisCiz(); ilceleriYukle();
+}
+
 async function ilceleriYukle(){
-  const { data, error } = await sb.from('ilceler').select('id,ad,lat,lng,iller(ad)');
-  if(error){ console.error(error); return; }
+  let data, error;
+  try { ({ data, error } = await sb.from('ilceler').select('id,ad,lat,lng,iller(ad)')); }
+  catch(e){ error = e; }
+  if(error || !data || !data.length){ console.error(error); baglantiHatasi('ilçe listesi'); return; }
+  document.getElementById('konum-durum').textContent = '';
   ILCELER = data.map(x => ({ id:x.id, ad:x.ad, il:x.iller?x.iller.ad:'', k:[x.lat,x.lng] }));
   const kayitli = localStorage.getItem('hq_ilce');
   if(kayitli){
@@ -1193,6 +1214,9 @@ if(kaEl && beEl){
 if(sb){
   girisCiz();
   ilceleriYukle();
+} else if(!yapilandirmaEksik){
+  document.getElementById('g-pill').textContent = 'Bağlantı hatası';
+  baglantiHatasi('kütüphane yüklenemedi');
 }
 
 /* ══════════════ GEÇMİŞİM ══════════════

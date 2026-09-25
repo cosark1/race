@@ -128,7 +128,9 @@ textarea{resize:vertical; min-height:64px}
 </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- supabase-js 2.117.1 kendi sitemizden: bazı ağlarda cdn.jsdelivr.net açılmayınca tüm sayfa
+     kodu duruyordu (ne ilçe listesi ne konum). Güncellemek için vendor/supabase.js değiştirilir. -->
+<script src="vendor/supabase.js"></script>
 <script src="config.js"></script>
 <script>
 const yapilandirmaEksik = !window.HQ_CONFIG || /SENIN-/.test(HQ_CONFIG.url) || /SENIN-/.test(HQ_CONFIG.anonKey);
