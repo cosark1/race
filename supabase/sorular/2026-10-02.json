@@ -1,0 +1,67 @@
+{
+ "tarih": "2026-10-02",
+ "baslik": "Cami ve Sosyal Hayat",
+ "korpus_hutbe_id": "02.10.2026",
+ "sorular": [
+  {
+   "sira": 1,
+   "metin": "Hutbede her cami, bir tevhit nişanesi ve bir vahdet merkezi olmanın yanında neye benzetilmiştir?",
+   "secenekler": [
+    "bir hikmet kandili",
+    "bir rahmet kapısı",
+    "bir istikamet pusulası",
+    "bir ilim hazinesi"
+   ],
+   "dogru_idx": 2,
+   "aciklama": "“Her cami, bir istikamet pusulası, bir tevhit nişanesi ve bir vahdet merkezidir.”"
+  },
+  {
+   "sira": 2,
+   "metin": "Hutbede, şehirlerin camilerin çevresinde geliştiği ve camilerin etrafında insanlığa hizmet edenler arasında sayılanlardan hangisi geçmemiştir?",
+   "secenekler": [
+    "Hastaneler",
+    "Hanlar",
+    "Hamamlar",
+    "Çarşılar"
+   ],
+   "dogru_idx": 0,
+   "aciklama": "“Şehirlerimiz, camilerin çevresinde gelişmiş; medreseler, kütüphaneler, çarşılar, hanlar, hamamlar ve vakfiyeler camilerin etrafında insanlığa hizmet etmiştir.” Hastaneler sayılanlar arasında yer almaz."
+  },
+  {
+   "sira": 3,
+   "metin": "Hutbeye göre camiler toplumsal hayatın merkezindeyken cenazelerin hüznü camilerde ne olmuştur?",
+   "secenekler": [
+    "paylaşılmış",
+    "filizlenmiş",
+    "himaye edilmiş",
+    "teskin olmuş"
+   ],
+   "dogru_idx": 3,
+   "aciklama": "“Düğünlerin sevinci, camilerin yanı başında paylaşılmış; cenazelerin hüznü, camilerde teskin olmuş; gariplerin umudu, camiler etrafında filizlenmiş; yetimler ve kimsesizler, camilerde himaye edilmiştir.”"
+  },
+  {
+   "sira": 4,
+   "metin": "Peygamber Efendimizin camide namaz için bir araya gelen müminlere seslenişi şöyledir: “Saflarınızı düzgün tutun, ayrı durmayın ki … de ayrılmasın.” Boşluğa hangisi gelir?",
+   "secenekler": [
+    "niyetleriniz",
+    "amelleriniz",
+    "kalpleriniz",
+    "dualarınız"
+   ],
+   "dogru_idx": 2,
+   "aciklama": "“Saflarınızı düzgün tutun, ayrı durmayın ki kalpleriniz de ayrılmasın.” (Müslim, Salât, 122)"
+  },
+  {
+   "sira": 5,
+   "metin": "Hutbede, camilerin sosyal hayatın bir parçası haline getirilmesi hedeflenirken büyüklerimizin camilerin neresinde hasbihal edecekleri belirtilmiştir?",
+   "secenekler": [
+    "kütüphanesinde",
+    "avlusunda",
+    "şadırvanında",
+    "son cemaat yerinde"
+   ],
+   "dogru_idx": 1,
+   "aciklama": "“…büyüklerimizin avlusunda hasbihal edecekleri…”"
+  }
+ ]
+}
