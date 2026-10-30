@@ -1,0 +1,67 @@
+{
+  "tarih": "2026-10-09",
+  "baslik": "İnsanlığın Sınavı Gazze",
+  "korpus_hutbe_id": "09.10.2026",
+  "sorular": [
+    {
+      "sira": 1,
+      "metin": "Hutbede aktarılan Gazzeli bir çocuğun sözü neyi ifade etmektedir?",
+      "secenekler": [
+        "Yıkılan evlerden kurtulmak için başka ülkelere göç edileceğini",
+        "Yıkılan yerlerin yeniden yapılacağını ve yurttan ayrılınmayacağını",
+        "Dünya devletlerinin müdahale etmesi gerektiğini",
+        "Eğitimden vazgeçilip yalnızca ibadete yöneleceğini"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“Evimizi yıkarsanız yenisini yaparız, okulumuzu yıkarsanız yenisini kurarız. Biz hiçbir yere gitmiyoruz!”"
+    },
+    {
+      "sira": 2,
+      "metin": "Hutbede Bakara suresi 249. ayetten alınan “Allah sabredenlerle beraberdir” sözüyle biten ayetin mesajı nedir?",
+      "secenekler": [
+        "Zulmün kendiliğinden sona ereceği, insanların bir şey yapmasına gerek olmadığı",
+        "Çok kalabalık toplulukların her zaman az sayıdakilere üstün geleceği",
+        "Savaşın ancak kalabalık ordularla kazanılabileceği",
+        "Az sayıdaki toplulukların Allah’ın izniyle çok kalabalık toplulukları yenebileceği"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "“…Nice az topluluklar, Allah’ın izniyle çok kalabalık topluluklara galip gelmiştir. Allah sabredenlerle beraberdir.” (Bakara, 2/249)"
+    },
+    {
+      "sira": 3,
+      "metin": "Hutbeye göre Gazzeli kardeşlerimizin imtihanı yoklukla mücadele etmekse, bizim imtihanımız nedir?",
+      "secenekler": [
+        "İmkânlarımızı onlarla paylaşmak",
+        "Yardım konusunu yalnızca devlet kurumlarına bırakmak",
+        "Tüketim alışkanlıklarımızı hiç değiştirmemek",
+        "Yaşadıkları acıyı kısa sürede unutmak"
+      ],
+      "dogru_idx": 0,
+      "aciklama": "“…onların imtihanı yoklukla mücadeleyse bizim imtihanımız imkânlarımızı onlarla paylaşmaktır.”"
+    },
+    {
+      "sira": 4,
+      "metin": "Hutbeye göre boykot nasıl değerlendirilmelidir?",
+      "secenekler": [
+        "Gelip geçici bir tepki olarak görülmelidir",
+        "Ekonomik bir hesap olarak kazanç ve kayıp dengesine göre değerlendirilmelidir",
+        "Zulme karşı bilinçli ve ahlaki bir tavır olarak görülmelidir",
+        "Yalnızca yerel esnafı zarara uğrattığı için terk edilmelidir"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“…boykotu gelip geçici bir tepki değil, zulme karşı bilinçli ve ahlaki bir tavır olarak görmektir.”"
+    },
+    {
+      "sira": 5,
+      "metin": "Hutbenin kapanışında okunan hadis-i şerife göre güçlü olanlar zayıflara karşı nasıl davranmalıdır?",
+      "secenekler": [
+        "Kendi işlerine bakarak mesafeli durmalıdır",
+        "Zayıfları koruyarak onları gözetmelidir",
+        "Zayıfların kendi çaresine bakması beklenmelidir",
+        "Zayıflarla ilişkisini yalnızca zorunlu olduğu kadar sürdürmelidir"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“…Müslümanlar, başkalarına karşı tek bir eldir. Güçlüleri zayıfları korur; önden gidenler geride kalanları gözetir…” (Ebû Dâvûd, Cihâd, 147; Nesâî, Kasâme, 9-10)"
+    }
+  ]
+}

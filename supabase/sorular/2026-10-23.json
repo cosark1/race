@@ -1,0 +1,67 @@
+{
+  "tarih": "2026-10-23",
+  "baslik": "Aile",
+  "korpus_hutbe_id": "23.10.2026",
+  "sorular": [
+    {
+      "sira": 1,
+      "metin": "Hutbeye göre insan, adaletin neyde olduğunu ailede nasıl tanır?",
+      "secenekler": [
+        "Anne babanın verdiği kararlarda",
+        "Büyüklerinin sözünde",
+        "Kardeşler arasında kurulan dengede",
+        "Evdeki görev paylaşımında"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“Doğruluğun, büyüklerinin sözünde; merhametin, kendisine gösterilen şefkatte; adaletin ise kardeşler arasında kurulan dengede olduğunu orada tanır.”"
+    },
+    {
+      "sira": 2,
+      "metin": "Hutbede aile, “bayram sabahında” ne yapmak olarak tarif edilir?",
+      "secenekler": [
+        "El öpmek",
+        "Hediyeleşmek",
+        "Bir arada kahvaltı etmek",
+        "Kucaklaşmak"
+      ],
+      "dogru_idx": 3,
+      "aciklama": "“Aile; hastalığında anne babanın bakımını üstlenmek, ateşi yükseldiğinde evladının başında beklemek, bayram sabahında kucaklaşmaktır.”"
+    },
+    {
+      "sira": 3,
+      "metin": "Hutbeye göre çocuklar ilk dualarını ve namazlarını nerede öğrenirler?",
+      "secenekler": [
+        "Dualarını babalarının yanında, namazlarını annelerinin dizinde",
+        "Dualarını annelerinin dizinde, namazlarını babalarının yanı başında",
+        "Dualarını dedelerinin dizinde, namazlarını babalarının yanı başında",
+        "Dualarını annelerinin dizinde, namazlarını camide cemaatle"
+      ],
+      "dogru_idx": 1,
+      "aciklama": "“Çocuklar, ilk dualarını annelerinin dizinde, namazlarını babalarının yanı başında öğrenirler.”"
+    },
+    {
+      "sira": 4,
+      "metin": "Hutbeye göre çocuklarını ekranlara mahkûm edip ilgi göstermeyen anne baba, onları neyden mahrum bırakmış olur?",
+      "secenekler": [
+        "Güzel terbiye mirasından",
+        "Aile sıcaklığından",
+        "Sosyal çevreden",
+        "Eğitim imkânlarından"
+      ],
+      "dogru_idx": 0,
+      "aciklama": "“Hiçbir anne baba, çocuğuna güzel terbiyeden daha üstün bir miras bırakamaz” (Tirmizî, Birr, 33). “Dolayısıyla çocuklarını ekranlara mahkûm edip ilgi göstermeyen bir anne ve baba, onları bu mirastan mahrum bırakıyor demektir.”"
+    },
+    {
+      "sira": 5,
+      "metin": "Hutbede genç kardeşlere hitaben yuva kurmak, günahlardan koruyacak neye benzetilir?",
+      "secenekler": [
+        "Bir kaleye",
+        "Bir zırha",
+        "Bir kalkana",
+        "Bir siper"
+      ],
+      "dogru_idx": 2,
+      "aciklama": "“Yuva kurmak; sizi günahlardan koruyacak bir kalkan, ruhunuza sükûnet verecek bir nimettir.”"
+    }
+  ]
+}
